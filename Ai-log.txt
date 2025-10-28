@@ -1,0 +1,304 @@
+so i am going to start a new project with react native and expo snack for making a pomodoro timer + focus stats, the db is with supabase and the anon key and the url are in the .env file, we will need to make a plan to creat this project as a mobile app entirely with login register with rls, first dont code or install any dependencies, first we will make a plan, ask me questions to ask me how id like to build the app
+
+1 yes 30 min wor, 10 min break
+the user should be able to customize the durations 
+no alerts
+yes
+manual start
+2
+total focus time, number of sessions completed
+no
+no
+graphs
+3 
+no social login
+no
+no
+no
+4 
+yes
+no
+it should be removed
+5 
+minimalistic modern with muted colours
+no
+yes
+multiple screens
+6
+no
+alarm sounds
+yes
+yes
+no
+
+now make a plan.md file with a step by step guide to implement the project. 
+
+have you got any other questions?
+
+1 login register, timere stats, history, settings 
+tab navigationa
+2 yes, seperate screen, 30 days
+3 timer durations, alarm sound on off, dark mode toggle
+4 no, save progress and continue when reopened
+5 only local, i want to be able to test it in my ios device
+
+have you got any other questions?
+
+
+shoyld i add the tables as a raw code in the sql editor in supabase?
+
+ive run everything youve send me
+
+ive got ERROR:  42710: trigger "on_auth_user_created" for relation "users" already exists
+
+perfekt it works
+
+i have the env like it is in the .env example
+
+the env credentials are in SUPABASE_URL and SUPABASE_ANON_KEY and not. like youve coded them 
+
+ive updated them with expo public 
+
+perfec now continue with the plan.md what you have still not implemented 
+
+i want to test it now
+
+i want to test it with my ios phone what is the best way to do it 
+
+i cant see a qr code in my terminal
+
+[runtime not ready]: Error: Missing Supabase environment variables
+
+anonymous
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:117481:19
+loadModuleImplementation
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:252:40
+guardedLoadModule
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:165:37
+metroRequire
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:78:91
+anonymous
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:117293:33
+loadModuleImplementation
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:252:40
+guardedLoadModule
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:165:37
+metroRequire
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:78:91
+anonymous
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:106691:38
+loadModuleImplementation
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:252:40
+guardedLoadModule
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:165:37
+metroRequire
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:78:91
+anonymous
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:3856:20
+loadModuleImplementation
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:252:40
+guardedLoadModule
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:158:46
+metroRequire
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:78:91
+global
+    &platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable:197128:3
+
+
+i want to test it on web so i can copy and paste the errors and then use it on ios
+
+Logs for your project will appear below. Press Ctrl+C to exit.
+It looks like you're trying to use web support but don't have the required dependencies installed.
+
+Install react-dom@19.1.0, react-native-web@^0.21.0 by running:
+
+npx expo install react-dom react-native-web
+
+If you're not using web, please ensure you remove the "web" string from the platforms array in the project Expo
+config.
+
+the .env file is created it is in the pomodoro-app folder
+
+render error in mobile the expo go app the exception in HostFunction type error expected dynamic type boolean but had type string 
+look the logs for it
+
+ [Error: Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string']
+ ERROR  [Error: Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string']
+ ERROR  [Error: Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string']
+ ERROR  [Error: Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string']
+
+
+it is in the app.tsx (10.36 and TReactFabric-dev.js (9200:35)
+
+Render Error
+Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string'
+Sources
+>
+9198
+9199
+9200
+9201
+9202 |
+9203
+_type2. validAttributes
+) ;
+_oldProps = createNode(
+current, _type2. uiViewClassName,
+renderLanes. containerTag,
+ReactFabric-dev-js (9200:35)
+8
+9
+10
+function AppContent () {
+const { user, loading } = useAuth() ;
+11
+12 |
+13
+if (loading) {
+return LoadingSpinner message="Loading
+App.tsx (10:36)
+Component Stack
+<AnimatedComponent /> createAnimatedComponent.js:107
+<Suspender /> src/index.tsx:6
+Dismiss
+Minimize
+
+Render Error
+Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string'
+<AnimatedComponent /> createAnimatedComponent.js:107
+< Suspender /> src/index.tsx:6
+<Freeze /> src/index.tsx:24
+See 31 more components
+Call Stack
+completework
+ReactFabric-dev.js:9200:35
+runwithFiberInDEV
+ReactFabric-dev.js:683:21 completeUnitOfWork
+ReactFabric-dev.js:12356:36
+performUnitOfWork
+ReactFabric-dev.js:12237:29
+workLoopSync
+ReactFabric-dev.js:12044:58
+renderRootSync
+ReactFabric-dev.js:12024:23
+performworkonRoot
+ReactFabric-dev.js:11587:53
+performworkonRootViaSchedulerTask
+ReactFabric-dev.js:3073:24
+Collapse all 8 frames
+
+
+Render Error
+Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string'
+Sources
+50
+includeFontPadding: false,
+51
+lineHeight: 20,
+>
+52
+1}
+53
+| body: {
+
+54 | paddingBottom: 10,
+55|3,
+
+LogBoxInspectorSection.js (52:4)
+176
+| * may or may not culminate in a value.
+177
+| * Taken from: https://github.com/mike-nort
+178
+*/
+179
+180
+181
+class Deferred {
+constructor() {
+I eslint-disable-next-line @typesc
+helpers.js (178:1)
+Component Stack
+<<global> /> helpers.js:178
+<global> />
+Recording.js:55
+
+
+
+Render Error
+Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string'
+Sources
+>
+9198
+9199
+9200
+9201
+9202 |
+9203
+_type2. validAttributes
+) ;
+_oldProps = createNode(
+current, _type2. uiViewClassName,
+renderLanes. containerTag,
+ReactFabric-dev-js (9200:35)
+8
+9
+10
+function AppContent () {
+const { user, loading } = useAuth() ;
+11
+12 |
+13
+if (loading) {
+return LoadingSpinner message="Loading
+App.tsx (10:36)
+Component Stack
+<AnimatedComponent /> createAnimatedComponent.js:107
+<Suspender /> src/index.tsx:6
+Dismiss
+Minimize
+
+
+still the errror  ERROR  [Error: Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string']
+
+it says please login navigation temporarily disabled for debuging
+
+ still the same error ERROR  [Error: Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string']
+
+ still the error  still the same error ERROR  [Error: Exception in HostFunction: TypeError: expected dynamic type 'boolean', but had type 'string']
+
+thing well look in the web online for fixes but fix it 
+
+continue the implementation where you left
+
+continue 
+
+the dark mode toggle doesnt work 
+
+the timer settings dont work if i set work duration 20min and break 4 mins it doesnt apply them when i go to the timer
+
+the log out button doesnt work
+
+the log out button still donesnt log me out
+
+this is my console log:
+
+still doesnt work this is my console log: 
+
+with alert it works but it should work as a button to beacuse it should work in ios
+
+
+when i log out then i cant log again in until i restartt the server i have this error 
+fix that
+
+add a homescreen not just a login or register page
+
+add a homescreen when i open the app not just a login or register page, have you questions on how tro implement it 
+
+1 before login
+
+make the ui better
+
+add at the top right a register and login button that navigsates me to these pages
+
+make a commit now in my branche of what we did until now and what is a todo for the next days 
