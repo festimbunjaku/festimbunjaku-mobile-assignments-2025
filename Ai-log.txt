@@ -364,3 +364,158 @@ what would be the best react native library for ui, since i am thinking of redes
 
 i want to use the gluestack ui for refactoring the ui of the project.
 
+i want to refactor the ui of the project, based on the project what would you suggest for a library to implement in the project
+
+i want to refactor the ui of the project, use these color palette - Tailwind
+
+{ 'walnut_brown': { DEFAULT: '#584d3d', 100: '#110f0c', 200: '#231f18', 300: '#342e24', 400: '#463d31', 500: '#584d3d', 600: '#82725a', 700: '#a6967f', 800: '#c4b9aa', 900: '#e1dcd4' }, 'ecru': { DEFAULT: '#9f956c', 100: '#201e15', 200: '#403c2a', 300: '#605a3f', 400: '#807754', 500: '#9f956c', 600: '#b2a989', 700: '#c5bfa6', 800: '#d8d4c4', 900: '#eceae1' }, 'nyanza': { DEFAULT: '#d3ffe9', 100: '#005d2e', 200: '#00ba5d', 300: '#17ff8b', 400: '#74ffba', 500: '#d3ffe9', 600: '#daffed', 700: '#e3fff1', 800: '#edfff6', 900: '#f6fffa' }, 'mountbatten_pink': { DEFAULT: '#94849b', 100: '#1e1a1f', 200: '#3b333f', 300: '#594d5e', 400: '#77677e', 500: '#94849b', 600: '#a99cae', 700: '#beb5c2', 800: '#d4ced7', 900: '#e9e6eb' }, 'tiffany_blue': { DEFAULT: '#8ddbe0', 100: '#10373a', 200: '#206e73', 300: '#2fa5ad', 400: '#55c8d1', 500: '#8ddbe0', 600: '#a5e2e6', 700: '#bce9ed', 800: '#d2f1f3', 900: '#e9f8f9' } }
+
+- CSV
+
+584d3d,9f956c,d3ffe9,94849b,8ddbe0
+
+- With #
+
+#584d3d, #9f956c, #d3ffe9, #94849b, #8ddbe0
+
+- Array
+
+["584d3d","9f956c","d3ffe9","94849b","8ddbe0"]
+
+- Object
+
+{"Walnut brown":"584d3d","Ecru":"9f956c","Nyanza":"d3ffe9","Mountbatten pink":"94849b","Tiffany Blue":"8ddbe0"}
+
+- Extended Array
+
+[{"name":"Walnut brown","hex":"584d3d","rgb":[88,77,61],"cmyk":[0,12,31,65],"hsb":[36,31,35],"hsl":[36,18,29],"lab":[33,2,11]},{"name":"Ecru","hex":"9f956c","rgb":[159,149,108],"cmyk":[0,6,32,38],"hsb":[48,32,62],"hsl":[48,21,52],"lab":[62,-3,23]},{"name":"Nyanza","hex":"d3ffe9","rgb":[211,255,233],"cmyk":[17,0,9,0],"hsb":[150,17,100],"hsl":[150,100,91],"lab":[97,-18,6]},{"name":"Mountbatten pink","hex":"94849b","rgb":[148,132,155],"cmyk":[5,15,0,39],"hsb":[282,15,61],"hsl":[282,10,56],"lab":[57,10,-10]},{"name":"Tiffany Blue","hex":"8ddbe0","rgb":[141,219,224],"cmyk":[37,2,0,12],"hsb":[184,37,88],"hsl":[184,57,72],"lab":[83,-23,-10]}]
+
+- XML
+
+<palette>
+  <color name="Walnut brown" hex="584d3d" r="88" g="77" b="61" />
+  <color name="Ecru" hex="9f956c" r="159" g="149" b="108" />
+  <color name="Nyanza" hex="d3ffe9" r="211" g="255" b="233" />
+  <color name="Mountbatten pink" hex="94849b" r="148" g="132" b="155" />
+  <color name="Tiffany Blue" hex="8ddbe0" r="141" g="219" b="224" />
+</palette>
+
+as the colors for the project 
+
+
+redesign the homepage entirely make it clean modern, 
+
+remove the emojis in the entire pooject dont use a single emoji use always svg install the react icon svg package and use the svgs instead of emojis
+
+remove the console log code from the entire project
+
+restructure the design of the homepage entirely, inspire online search online for modern designs
+
+use these colors as variables this should be the new color palette throughout the project and then in the project just use the colors as variables Colors in Palette
+Color	Hex	RGB
+#724e2c	(114,78,44)
+#271300	(39,19,0)
+#9c6f44	(156,111,68)
+#563517	(86,53,23)
+#6f4827	(111,72,39)
+
+
+the brwon colors should be for the light mode, this should be the colors for the dark mode Colors in Palette
+Color	Hex	RGB
+#000000	(0,0,0)
+#161618	(22,22,24)
+#212124	(33,33,36)
+#ffffff	(255,255,255)
+#818181	(129,129,129)
+
+
+ERROR  [Error: Requiring unknown module "1628". If you are sure the module exists, try restarting Metro. You may also want to run `yarn` or `npm install`.]
+
+
+WARN  "target" is not a valid icon name for family "material"
+ WARN  "target" is not a valid icon name for family "material"
+ WARN  "target" is not a valid icon name for family "material"
+ WARN  "target" is not a valid icon name for family "material"
+ WARN  "target" is not a valid icon name for family "material"
+
+
+the dark mode is not working the contrast isnt good fix that
+
+now the typography, change the typography, search online for the best fonts for a pomodoro app as of 2025 and use them in the project with a clean way
+
+ ERROR  [Error: useTheme must be used within a ThemeProvider]
+
+| Role                  | Purpose                  | Dark Mode Hex | Notes                                               |
+| --------------------- | ------------------------ | ------------- | --------------------------------------------------- |
+| **Background**        | Base / Page background   | `#120A04`     | Deep espresso-brown — soft and warm, not pure black |
+| **Surface / Card**    | Containers / UI surfaces | `#1E1208`     | Slightly lighter brown for layering                 |
+| **Primary Accent**    | Main brand / highlight   | `#A87448`     | Rich bronze-gold for contrast and warmth            |
+| **Secondary Accent**  | Buttons / icons / focus  | `#8B5A2B`     | Medium copper-brown for subtle depth                |
+| **Text / Highlights** | Text & icons             | `#DCC3A2`     | Warm beige — readable and natural on dark brown     |
+
+
+i dont like the homescreen please make it better adjust it 
+
+the 25 min focus in the homepage should be smaller beacuse now it is 25 mi then new line and trhen the n
+
+make the other cards klike smart timer analytics etc the same size 
+
+remove the section ready to transform your productivity
+
+label the app with the name FocusEdge 
+
+when i give the email the text isnt centered in the text field i cant see the g at gmail not entirely, fix that
+
+it still didnt fix it  i think there is padding or margin top
+
+now the gap between the top of the text and the bottom is not the same fix that
+
+nope still doesnt work
+
+now the top is white i cant see the l or f entirely
+
+add at the bottom of the hoempage build by festim bunjaku fith a link to festimbunjaku.dev
+
+make the typography better in the footer
+
+or make it copyright by Festim Bunjaku with a c from the copyright as svg and Festim Bunjaku in bold to be known that it is a link
+
+make the Festim bunjaku bolder
+
+wehen i log in and i switch the tabs it isnt clear in which tab i am, change the ui to make it clear, search online for design trends for that and apply it to the project 
+
+ ERROR  [Error: TransformError SyntaxError: /Users/festimbunjaku/Desktop/Inxhinieri Softuerike/SEMESTRI 5/Programimi për pajisje mobile/festimbunjaku-mobile-assignments-2025/pomodoro-app/src/navigation/MainNavigator.tsx: Unexpected token, expected "}" (108:10)
+
+  106 |             </View>
+  107 |           ),
+> 108 |         }))}
+      |           ^
+  109 |       />
+  110 |       <Tab.Screen
+  111 |         name="Stats"]
+
+
+
+remove the dot let just the hover to the active tab
+
+add at the settings page built by festim Bunjaku with the link the same as at the footer
+
+make it smaller, and dont add copyright but Built by
+
+it should be below the log out button 
+
+remove the margin top of it 
+
+reduce the margin bottom of the darkmode section 
+
+at login and register add at the footer a home icon that sends the user to the home page
+
+make the home icon in the bottom 
+
+create.a propper readme file with infos about the project, install instructions from cloning the repo to the running it locally and making it work in wxpo go etc. based on best practices
+
+now commit the project with a commit message 
+
+the commit message should be for all changes from the latest commit to this commit
+
+this is the final commit the final state of the project
