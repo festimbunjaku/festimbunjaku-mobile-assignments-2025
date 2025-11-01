@@ -17,6 +17,8 @@ export const UnauthNavigator: React.FC = () => {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
+        animationEnabled: true,
+        gestureEnabled: false,
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />

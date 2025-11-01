@@ -58,18 +58,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const signUp = async (email: string, password: string) => {
     try {
+      console.log("🔵 [AUTH] signUp called with email:", email);
+      const trimmedEmail = email.trim().toLowerCase();
+      
+      // Validate email format
+      if (!trimmedEmail || !/\S+@\S+\.\S+/.test(trimmedEmail)) {
+        return { 
+          error: { 
+            message: "Please enter a valid email address",
+            status: 422 
+          } 
+        };
+      }
+
+      // Validate password length
+      if (!password || password.length < 6) {
+        return { 
+          error: { 
+            message: "Password must be at least 6 characters",
+            status: 422 
+          } 
+        };
+      }
+      
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: trimmedEmail,
         password,
+        options: {
+          emailRedirectTo: undefined, // For mobile apps, no redirect needed
+          data: {
+            email: trimmedEmail,
+          },
+        },
       });
 
       if (error) {
+        console.error("🔵 [AUTH] signUp error:", error);
+        console.error("🔵 [AUTH] Error code:", error.status);
+        console.error("🔵 [AUTH] Error message:", error.message);
+        console.error("🔵 [AUTH] Full error:", JSON.stringify(error, null, 2));
         return { error };
       }
 
+      console.log("🔵 [AUTH] signUp successful, user:", data.user?.email);
+      console.log("🔵 [AUTH] User ID:", data.user?.id);
+      console.log("🔵 [AUTH] Requires confirmation:", data.user?.email_confirmed_at === null);
+      
       return { error: null };
-    } catch (error) {
-      return { error };
+    } catch (error: any) {
+      console.error("🔵 [AUTH] signUp exception:", error);
+      return { error: error || { message: "An unexpected error occurred" } };
     }
   };
 

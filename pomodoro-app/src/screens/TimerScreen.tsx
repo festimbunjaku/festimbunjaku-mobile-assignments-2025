@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, ScrollView, StyleSheet, Alert } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../hooks/useAuth";
 import { useSettings } from "../context/SettingsContext";
 import { useTheme } from "../context/ThemeContext";
@@ -33,6 +34,33 @@ export const TimerScreen: React.FC = () => {
   const [totalFocusTime, setTotalFocusTime] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Function to load stats
+  const loadStats = useCallback(async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const completed = await timerService.getTodaysSessionCount(user.id);
+      const focusTime = await timerService.getTodaysFocusTime(user.id);
+
+      setSessionsCompleted(completed);
+      setTotalFocusTime(focusTime);
+    } catch (error) {
+      console.error("Error loading stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
+
+  // Refresh stats when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadStats();
+    }, [loadStats])
+  );
+
   // Update timer duration when settings change
   useEffect(() => {
     if (settings && timerState.status === "idle") {
@@ -45,26 +73,10 @@ export const TimerScreen: React.FC = () => {
     timerState.status,
   ]);
 
-  // Load today's stats
+  // Load stats on mount
   useEffect(() => {
-    const loadStats = async () => {
-      if (!user) return;
-
-      try {
-        const completed = await timerService.getTodaysSessionCount(user.id);
-        const focusTime = await timerService.getTodaysFocusTime(user.id);
-
-        setSessionsCompleted(completed);
-        setTotalFocusTime(focusTime);
-      } catch (error) {
-        console.error("Error loading stats:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadStats();
-  }, [user]);
+  }, [loadStats]);
 
   // Refresh stats when timer completes a session
   useEffect(() => {
@@ -83,18 +95,20 @@ export const TimerScreen: React.FC = () => {
             // Stop alarm if still playing
             soundManager.stopAlarm();
 
-            // Update stats
-            if (user) {
-              const completed = await timerService.getTodaysSessionCount(
-                user.id
-              );
-              const focusTime = await timerService.getTodaysFocusTime(user.id);
-              setSessionsCompleted(completed);
-              setTotalFocusTime(focusTime);
-            }
-
-            // Auto stop and reset
+            // Auto stop and reset first (this saves the session)
             await stopTimer();
+
+            // Wait a moment for the database to update, then refresh stats
+            setTimeout(async () => {
+              if (user) {
+                const completed = await timerService.getTodaysSessionCount(
+                  user.id
+                );
+                const focusTime = await timerService.getTodaysFocusTime(user.id);
+                setSessionsCompleted(completed);
+                setTotalFocusTime(focusTime);
+              }
+            }, 500);
           },
         },
       ]);

@@ -191,17 +191,24 @@ export const useTimer = (options: UseTimerOptions = {}) => {
   }, [timerState.status, timerState.pausedAt]);
 
   const stopTimer = useCallback(async () => {
-    if (!timerState.currentSessionId || !user) return;
+    if (!timerState.currentSessionId || !user) {
+      return;
+    }
 
     const focusedTime = timerState.targetDuration - timerState.timeRemaining;
     const now = new Date();
+    const isCompleted = timerState.status === "completed";
 
     // Update session in database
-    await timerService.updateSession(timerState.currentSessionId, {
+    const updatedSession = await timerService.updateSession(timerState.currentSessionId, {
       duration: Math.max(0, focusedTime),
-      is_completed: timerState.status === "completed",
-      completed_at: now.toISOString(),
+      is_completed: isCompleted,
+      completed_at: isCompleted ? now.toISOString() : undefined,
     });
+
+    if (!updatedSession) {
+      console.error("Failed to update session");
+    }
 
     // Reset timer
     const nextSessionType: SessionType =

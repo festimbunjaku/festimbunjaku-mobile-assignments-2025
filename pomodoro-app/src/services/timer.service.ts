@@ -104,23 +104,32 @@ export const timerService = {
   // Get total focus time for today
   async getTodaysFocusTime(userId: string): Promise<number> {
     try {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      // Use UTC to avoid timezone issues - get start of today in UTC
+      const now = new Date();
+      const todayStartUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+      const todayEndUTC = new Date(todayStartUTC);
+      todayEndUTC.setUTCDate(todayEndUTC.getUTCDate() + 1);
 
+      // Get all work sessions for today (both completed and incomplete, but with duration > 0)
       const { data, error } = await supabase
         .from("sessions")
-        .select("duration")
+        .select("duration, started_at, is_completed, type")
         .eq("user_id", userId)
         .eq("type", "work")
-        .eq("is_completed", true)
-        .gte("started_at", today.toISOString());
+        .gte("started_at", todayStartUTC.toISOString())
+        .lt("started_at", todayEndUTC.toISOString())
+        .gt("duration", 0); // Only count sessions with actual focus time
 
       if (error) {
         console.error("Error fetching today's focus time:", error);
         return 0;
       }
 
-      return data?.reduce((sum, session) => sum + session.duration, 0) || 0;
+      const total = data?.reduce((sum, session) => {
+        return sum + (session.duration || 0);
+      }, 0) || 0;
+
+      return total;
     } catch (error) {
       console.error("Error fetching today's focus time:", error);
       return 0;
@@ -130,22 +139,28 @@ export const timerService = {
   // Get completed sessions count for today
   async getTodaysSessionCount(userId: string): Promise<number> {
     try {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      // Use UTC to avoid timezone issues - get start of today in UTC
+      const now = new Date();
+      const todayStartUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+      const todayEndUTC = new Date(todayStartUTC);
+      todayEndUTC.setUTCDate(todayEndUTC.getUTCDate() + 1);
 
+      // Count all work sessions with duration > 0 (both completed and in-progress)
       const { data, error, count } = await supabase
         .from("sessions")
-        .select("id", { count: "exact" })
+        .select("id, started_at, is_completed, type, duration", { count: "exact" })
         .eq("user_id", userId)
-        .eq("is_completed", true)
-        .gte("started_at", today.toISOString());
+        .eq("type", "work")
+        .gte("started_at", todayStartUTC.toISOString())
+        .lt("started_at", todayEndUTC.toISOString())
+        .gt("duration", 0); // Only count sessions with actual focus time
 
       if (error) {
         console.error("Error fetching today's session count:", error);
         return 0;
       }
 
-      return count || 0;
+      return count || data?.length || 0;
     } catch (error) {
       console.error("Error fetching today's session count:", error);
       return 0;
@@ -192,7 +207,7 @@ export const timerService = {
         .select("started_at, duration, type")
         .eq("user_id", userId)
         .eq("type", "work")
-        .eq("is_completed", true)
+        .gt("duration", 0) // Include sessions with actual focus time, not just completed
         .gte("started_at", startDate.toISOString())
         .order("started_at", { ascending: true });
 

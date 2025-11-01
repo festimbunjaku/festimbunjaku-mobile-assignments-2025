@@ -63,21 +63,31 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
     if (!validateForm()) return;
 
     setLoading(true);
-    const { error } = await signUp(email, password);
+    const { error } = await signUp(email.trim(), password);
     setLoading(false);
 
     if (error) {
-      Alert.alert(
-        "Registration Failed",
-        error.message || "Could not create account"
-      );
+      console.error("Registration error:", error);
+      let errorMessage = "Could not create account";
+      
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.status === 422) {
+        errorMessage = "Invalid email or password format. Please check your input.";
+      }
+      
+      Alert.alert("Registration Failed", errorMessage);
     } else {
-      Alert.alert("Success!", "Account created successfully. Please sign in.", [
-        {
-          text: "OK",
-          onPress: () => navigation.navigate("Login"),
-        },
-      ]);
+      Alert.alert(
+        "Success!",
+        "Account created successfully. You can now sign in.",
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("Login"),
+          },
+        ]
+      );
     }
   };
 
