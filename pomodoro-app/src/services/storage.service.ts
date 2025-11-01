@@ -14,7 +14,7 @@ export const storageService = {
         JSON.stringify(state)
       );
     } catch (error) {
-      console.error("Error saving timer state:", error);
+      // Error saving timer state
     }
   },
 
@@ -23,7 +23,6 @@ export const storageService = {
       const state = await AsyncStorage.getItem(STORAGE_KEYS.TIMER_STATE);
       return state ? JSON.parse(state) : null;
     } catch (error) {
-      console.error("Error getting timer state:", error);
       return null;
     }
   },
@@ -32,7 +31,7 @@ export const storageService = {
     try {
       await AsyncStorage.removeItem(STORAGE_KEYS.TIMER_STATE);
     } catch (error) {
-      console.error("Error clearing timer state:", error);
+      // Error clearing timer state
     }
   },
 
@@ -41,7 +40,7 @@ export const storageService = {
     try {
       await AsyncStorage.setItem(STORAGE_KEYS.THEME_MODE, mode);
     } catch (error) {
-      console.error("Error saving theme mode:", error);
+      // Error saving theme mode
     }
   },
 
@@ -52,7 +51,6 @@ export const storageService = {
         | "dark"
         | null;
     } catch (error) {
-      console.error("Error getting theme mode:", error);
       return null;
     }
   },

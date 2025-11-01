@@ -4,6 +4,7 @@ import Svg, { Circle } from "react-native-svg";
 import { TimerState } from "../../types";
 import { formatTime } from "../../utils";
 import { useTheme } from "../../context/ThemeContext";
+import { typography } from "../../constants/typography";
 
 interface TimerDisplayProps {
   timerState: TimerState;
@@ -108,19 +109,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   timeText: {
+    ...typography.styles.timerMedium,
     fontSize: 56,
-    fontWeight: "700",
   },
   sessionLabel: {
-    fontSize: 14,
+    ...typography.styles.label,
     marginTop: 8,
-    fontWeight: "600",
   },
   statusContainer: {
     marginTop: 20,
   },
   statusText: {
-    fontSize: 12,
+    ...typography.styles.caption,
     fontWeight: "600",
     letterSpacing: 0.5,
   },

@@ -13,13 +13,11 @@ export const timerService = {
         .single();
 
       if (error) {
-        console.error("Error creating session:", error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error("Error creating session:", error);
       return null;
     }
   },
@@ -38,13 +36,11 @@ export const timerService = {
         .single();
 
       if (error) {
-        console.error("Error updating session:", error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error("Error updating session:", error);
       return null;
     }
   },
@@ -63,13 +59,11 @@ export const timerService = {
         .order("started_at", { ascending: false });
 
       if (error) {
-        console.error("Error fetching today's sessions:", error);
         return [];
       }
 
       return data || [];
     } catch (error) {
-      console.error("Error fetching today's sessions:", error);
       return [];
     }
   },
@@ -90,13 +84,11 @@ export const timerService = {
         .order("started_at", { ascending: false });
 
       if (error) {
-        console.error("Error fetching sessions in range:", error);
         return [];
       }
 
       return data || [];
     } catch (error) {
-      console.error("Error fetching sessions in range:", error);
       return [];
     }
   },
@@ -121,7 +113,6 @@ export const timerService = {
         .gt("duration", 0); // Only count sessions with actual focus time
 
       if (error) {
-        console.error("Error fetching today's focus time:", error);
         return 0;
       }
 
@@ -131,7 +122,6 @@ export const timerService = {
 
       return total;
     } catch (error) {
-      console.error("Error fetching today's focus time:", error);
       return 0;
     }
   },
@@ -156,13 +146,11 @@ export const timerService = {
         .gt("duration", 0); // Only count sessions with actual focus time
 
       if (error) {
-        console.error("Error fetching today's session count:", error);
         return 0;
       }
 
       return count || data?.length || 0;
     } catch (error) {
-      console.error("Error fetching today's session count:", error);
       return 0;
     }
   },
@@ -176,13 +164,11 @@ export const timerService = {
         .eq("id", sessionId);
 
       if (error) {
-        console.error("Error deleting session:", error);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error("Error deleting session:", error);
       return false;
     }
   },
@@ -212,7 +198,6 @@ export const timerService = {
         .order("started_at", { ascending: true });
 
       if (error) {
-        console.error("Error fetching stats:", error);
         return [];
       }
 
@@ -239,7 +224,6 @@ export const timerService = {
         })
       );
     } catch (error) {
-      console.error("Error fetching stats for days:", error);
       return [];
     }
   },

@@ -7,6 +7,7 @@ import {
   RefreshControl,
   FlatList,
 } from "react-native";
+import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "../hooks/useAuth";
 import { useTheme } from "../context/ThemeContext";
 import { timerService } from "../services/timer.service";
@@ -38,7 +39,7 @@ export const HistoryScreen: React.FC = () => {
       );
       setSessions(data);
     } catch (error) {
-      console.error("Error fetching history:", error);
+      // Error fetching history
     } finally {
       setLoading(false);
     }
@@ -97,9 +98,11 @@ export const HistoryScreen: React.FC = () => {
                       },
                     ]}
                   >
-                    <Text style={styles.sessionTypeText}>
-                      {session.type === "work" ? "🎯" : "☕"}
-                    </Text>
+                    {session.type === "work" ? (
+                      <MaterialIcons name="center-focus-strong" size={20} color={theme.surface} />
+                    ) : (
+                      <FontAwesome name="coffee" size={20} color={theme.surface} />
+                    )}
                   </View>
                   <View>
                     <Text
@@ -121,18 +124,51 @@ export const HistoryScreen: React.FC = () => {
                   >
                     {formatDuration(session.duration)}
                   </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 4,
+                    }}
+                  >
+                    {session.is_completed ? (
+                      <>
+                        <MaterialIcons
+                          name="check-circle"
+                          size={14}
+                          color={theme.accent.success}
+                        />
+                        <Text
+                          style={[
+                            styles.sessionStatus,
+                            {
+                              color: theme.accent.success,
+                            },
+                          ]}
+                        >
+                          Done
+                        </Text>
+                      </>
+                    ) : (
+                      <>
+                        <MaterialIcons
+                          name="pause-circle-filled"
+                          size={14}
+                          color={theme.accent.warning}
+                        />
                   <Text
                     style={[
                       styles.sessionStatus,
                       {
-                        color: session.is_completed
-                          ? theme.accent.success
-                          : theme.accent.warning,
+                              color: theme.accent.warning,
                       },
                     ]}
                   >
-                    {session.is_completed ? "✓ Done" : "⏸ Paused"}
+                          Paused
                   </Text>
+                      </>
+                    )}
+                  </View>
                 </View>
               </View>
             ))}
@@ -190,9 +226,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
-  },
-  sessionTypeText: {
-    fontSize: 20,
   },
   sessionTypeLabel: {
     fontSize: 14,

@@ -1,5 +1,7 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useTheme } from "../../context/ThemeContext";
 
 interface LoadingSpinnerProps {
   message?: string;
@@ -8,10 +10,12 @@ interface LoadingSpinnerProps {
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   message = "Loading...",
 }) => {
+  const { theme } = useTheme();
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>⏳</Text>
-      <Text style={styles.message}>{message}</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <MaterialIcons name="hourglass-empty" size={48} color={theme.primary} />
+      <Text style={[styles.message, { color: theme.text.secondary }]}>{message}</Text>
     </View>
   );
 };
@@ -21,14 +25,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F7F7F5",
-  },
-  title: {
-    fontSize: 48,
-    marginBottom: 16,
+    gap: 16,
   },
   message: {
     fontSize: 16,
-    color: "#636E72",
   },
 });

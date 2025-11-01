@@ -58,7 +58,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const signUp = async (email: string, password: string) => {
     try {
-      console.log("🔵 [AUTH] signUp called with email:", email);
       const trimmedEmail = email.trim().toLowerCase();
       
       // Validate email format
@@ -93,59 +92,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       if (error) {
-        console.error("🔵 [AUTH] signUp error:", error);
-        console.error("🔵 [AUTH] Error code:", error.status);
-        console.error("🔵 [AUTH] Error message:", error.message);
-        console.error("🔵 [AUTH] Full error:", JSON.stringify(error, null, 2));
         return { error };
       }
 
-      console.log("🔵 [AUTH] signUp successful, user:", data.user?.email);
-      console.log("🔵 [AUTH] User ID:", data.user?.id);
-      console.log("🔵 [AUTH] Requires confirmation:", data.user?.email_confirmed_at === null);
-      
       return { error: null };
     } catch (error: any) {
-      console.error("🔵 [AUTH] signUp exception:", error);
       return { error: error || { message: "An unexpected error occurred" } };
     }
   };
 
   const signIn = async (email: string, password: string) => {
     try {
-      console.log("🔴 [AUTH] signIn called with email:", email);
-      console.log("🔴 [AUTH] Password length:", password.length);
-
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        console.error("🔴 [AUTH] signIn error details:", error);
         return { error };
       }
 
-      console.log("🔴 [AUTH] signIn successful, user:", data.user?.email);
       return { error: null };
     } catch (error) {
-      console.error("🔴 [AUTH] signIn exception:", error);
       return { error };
     }
   };
 
   const signOut = async () => {
-    console.log("🔴 [AUTH] signOut called");
     try {
-      console.log("🔴 [AUTH] Calling supabase.auth.signOut()");
       const { error } = await supabase.auth.signOut();
 
       if (error) {
-        console.error("🔴 [AUTH] Supabase error:", error);
         throw error;
       }
-
-      console.log("🔴 [AUTH] Supabase signOut successful");
 
       // Clear ALL auth-related storage keys
       try {
@@ -160,18 +139,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
         if (keysToRemove.length > 0) {
           await AsyncStorage.multiRemove(keysToRemove);
-          console.log("🔴 [AUTH] Cleared storage keys:", keysToRemove);
         }
       } catch (storageError) {
-        console.warn("🔴 [AUTH] Could not clear storage:", storageError);
+        // Silently handle storage clearing errors
       }
 
       // Force clear the state immediately
       setUser(null);
       setSession(null);
-      console.log("🔴 [AUTH] User state cleared, should redirect to login");
     } catch (error) {
-      console.error("🔴 [AUTH] Exception in signOut:", error);
       // Even on error, try to clear state
       setUser(null);
       setSession(null);

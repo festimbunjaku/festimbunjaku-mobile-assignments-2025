@@ -6,157 +6,336 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
+  Dimensions,
+  Linking,
 } from "react-native";
-import { Button } from "../components/Common";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../context/ThemeContext";
+import { typography } from "../constants/typography";
+
+const { width } = Dimensions.get("window");
 
 interface HomeScreenProps {
   navigation: any;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
+  const { theme } = useTheme();
+
+  const highlights = [
+    {
+      icon: "timer" as const,
+      iconType: "MaterialIcons" as const,
+      value: "25min",
+      label: "Focus",
+      gradient: theme.accent.work,
+    },
+    {
+      icon: "free-breakfast" as const,
+      iconType: "MaterialIcons" as const,
+      value: "5min",
+      label: "Break",
+      gradient: theme.accent.break,
+    },
+    {
+      icon: "trending-up" as const,
+      iconType: "MaterialIcons" as const,
+      value: "4x",
+      label: "Sessions",
+      gradient: theme.primary,
+    },
+  ];
+
+  const features = [
+    {
+      icon: "timer" as const,
+      iconType: "MaterialIcons" as const,
+      title: "Smart Timer",
+      description: "Customizable sessions",
+      color: theme.accent.work,
+    },
+    {
+      icon: "bar-chart" as const,
+      iconType: "MaterialIcons" as const,
+      title: "Analytics",
+      description: "Track progress",
+      color: theme.primary,
+    },
+    {
+      icon: "center-focus-strong" as const,
+      iconType: "MaterialIcons" as const,
+      title: "Focus Mode",
+      description: "Zero distractions",
+      color: theme.accent.break,
+    },
+    {
+      icon: "notifications-active" as const,
+      iconType: "MaterialIcons" as const,
+      title: "Alerts",
+      description: "Smart reminders",
+      color: theme.secondary,
+    },
+  ];
+
+  const benefits = [
+    "Increase productivity by 40%",
+    "Better work-life balance",
+    "Track your growth over time",
+  ];
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Top Navigation Bar */}
-      <View style={styles.navBar}>
-        <View style={styles.navContent}>
-          <Text style={styles.navBrand}>FocusFlow</Text>
-          <View style={styles.navButtons}>
-            <TouchableOpacity
-              style={styles.navButton}
-              onPress={() => navigation.navigate("Login")}
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Header Navigation */}
+      <View style={styles.header}>
+        <Text style={[styles.brand, { color: theme.text.primary }]}>
+          FocusEdge
+        </Text>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Login")}
+            style={[styles.headerButton, { borderColor: theme.border }]}
+          >
+            <Text
+              style={[styles.headerButtonText, { color: theme.text.primary }]}
             >
-              <Text style={styles.navButtonText}>Sign In</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.navButton, styles.navButtonPrimary]}
-              onPress={() => navigation.navigate("Register")}
+              Sign In
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Register")}
+            style={[
+              styles.headerButton,
+              styles.headerButtonPrimary,
+              {
+                backgroundColor: theme.primary,
+              },
+            ]}
+          >
+            <Text
+              style={[styles.headerButtonTextPrimary, { color: "#FFFFFF" }]}
             >
-              <Text style={styles.navButtonTextPrimary}>Get Started</Text>
-            </TouchableOpacity>
+              Get Started
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Hero Section */}
+      <View style={styles.heroSection}>
+        <View style={styles.heroContent}>
+          <View
+            style={[
+              styles.heroBadge,
+              { backgroundColor: theme.primary + "20" },
+            ]}
+          >
+            <MaterialIcons name="star" size={16} color={theme.primary} />
+            <Text style={[styles.heroBadgeText, { color: theme.primary }]}>
+              #1 Productivity App
+            </Text>
+          </View>
+
+          <Text style={[styles.heroTitle, { color: theme.text.primary }]}>
+            Master Your Time,{"\n"}Amplify Your Focus
+          </Text>
+
+          <Text
+            style={[styles.heroDescription, { color: theme.text.secondary }]}
+          >
+            Transform your productivity with the proven Pomodoro technique. Work
+            smarter, rest better, achieve more.
+          </Text>
+
+          {/* Highlight Cards */}
+          <View style={styles.highlightsContainer}>
+            {highlights.map((highlight, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.highlightCard,
+                  {
+                    backgroundColor: theme.surface,
+                    borderColor: theme.border,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.highlightIconWrapper,
+                    { backgroundColor: highlight.gradient + "15" },
+                  ]}
+                >
+                  {highlight.iconType === "MaterialIcons" ? (
+                    <MaterialIcons
+                      name={highlight.icon}
+                      size={24}
+                      color={highlight.gradient}
+                    />
+                  ) : (
+                    <Ionicons
+                      name={highlight.icon}
+                      size={24}
+                      color={highlight.gradient}
+                    />
+                  )}
+                </View>
+                <Text
+                  style={[styles.highlightValue, { color: theme.text.primary }]}
+                >
+                  {highlight.value}
+                </Text>
+                <Text
+                  style={[
+                    styles.highlightLabel,
+                    { color: theme.text.secondary },
+                  ]}
+                >
+                  {highlight.label}
+                </Text>
+              </View>
+            ))}
           </View>
         </View>
       </View>
 
-      {/* Main Content */}
-      <View style={styles.mainContent}>
-        {/* Value Proposition */}
-        <View style={styles.valueSection}>
-          <Text style={styles.valueTitle}>Take Control of Your Time</Text>
-          <Text style={styles.valueDescription}>
-            Work smarter, not harder. Break your day into focused sessions with
-            strategic breaks.
+      {/* Features Section */}
+      <View style={styles.featuresSection}>
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>
+            Everything You Need
+          </Text>
+          <Text
+            style={[styles.sectionSubtitle, { color: theme.text.secondary }]}
+          >
+            Powerful tools for focused work
           </Text>
         </View>
 
-        {/* Features Grid */}
-        <View style={styles.featuresSection}>
-          <Text style={styles.sectionTitle}>Why Choose FocusFlow?</Text>
-
-          <View style={styles.featureGrid}>
-            <View style={styles.featureColumn}>
-              <View style={[styles.featureCard, styles.featureCard1]}>
-                <Text style={styles.featureIcon}>⏱️</Text>
-                <Text style={styles.featureTitle}>Smart Timers</Text>
-                <Text style={styles.featureDesc}>Customizable sessions</Text>
+        <View style={styles.featuresGrid}>
+          {features.map((feature, index) => (
+            <View
+              key={index}
+              style={[
+                styles.featureCard,
+                {
+                  backgroundColor: theme.surface,
+                  borderColor: theme.border,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.featureIconWrapper,
+                  { backgroundColor: feature.color + "15" },
+                ]}
+              >
+                {feature.iconType === "MaterialIcons" ? (
+                  <MaterialIcons
+                    name={feature.icon}
+                    size={32}
+                    color={feature.color}
+                  />
+                ) : (
+                  <Ionicons
+                    name={feature.icon}
+                    size={32}
+                    color={feature.color}
+                  />
+                )}
               </View>
-
-              <View style={[styles.featureCard, styles.featureCard2]}>
-                <Text style={styles.featureIcon}>📊</Text>
-                <Text style={styles.featureTitle}>Analytics</Text>
-                <Text style={styles.featureDesc}>Track your progress</Text>
-              </View>
-            </View>
-
-            <View style={styles.featureColumn}>
-              <View style={[styles.featureCard, styles.featureCard3]}>
-                <Text style={styles.featureIcon}>🔔</Text>
-                <Text style={styles.featureTitle}>Alerts</Text>
-                <Text style={styles.featureDesc}>Smart notifications</Text>
-              </View>
-
-              <View style={[styles.featureCard, styles.featureCard4]}>
-                <Text style={styles.featureIcon}>🎯</Text>
-                <Text style={styles.featureTitle}>Focus Mode</Text>
-                <Text style={styles.featureDesc}>Zero distractions</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* Stats Section */}
-        <View style={styles.statsSection}>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>25min</Text>
-            <Text style={styles.statLabel}>Focus Sessions</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>5min</Text>
-            <Text style={styles.statLabel}>Short Break</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>15min</Text>
-            <Text style={styles.statLabel}>Long Break</Text>
-          </View>
-        </View>
-
-        {/* Benefits */}
-        <View style={styles.benefitsSection}>
-          <Text style={styles.sectionTitle}>Transform Your Habits</Text>
-
-          <View style={styles.benefitItem}>
-            <View style={styles.benefitCheckbox}>
-              <Text style={styles.checkmark}>✓</Text>
-            </View>
-            <View style={styles.benefitContent}>
-              <Text style={styles.benefitTitle}>Increase Productivity</Text>
-              <Text style={styles.benefitDesc}>
-                50% more focus time with strategic breaks
+              <Text
+                style={[styles.featureTitle, { color: theme.text.primary }]}
+              >
+                {feature.title}
+              </Text>
+              <Text
+                style={[
+                  styles.featureDescription,
+                  { color: theme.text.secondary },
+                ]}
+                numberOfLines={2}
+              >
+                {feature.description}
               </Text>
             </View>
-          </View>
-
-          <View style={styles.benefitItem}>
-            <View style={styles.benefitCheckbox}>
-              <Text style={styles.checkmark}>✓</Text>
-            </View>
-            <View style={styles.benefitContent}>
-              <Text style={styles.benefitTitle}>Better Work-Life Balance</Text>
-              <Text style={styles.benefitDesc}>
-                Know when to work and when to rest
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.benefitItem}>
-            <View style={styles.benefitCheckbox}>
-              <Text style={styles.checkmark}>✓</Text>
-            </View>
-            <View style={styles.benefitContent}>
-              <Text style={styles.benefitTitle}>Track Your Growth</Text>
-              <Text style={styles.benefitDesc}>
-                Visual insights into your productivity patterns
-              </Text>
-            </View>
-          </View>
+          ))}
         </View>
       </View>
-      {/* CTA Section */}
-      <View style={styles.ctaSection}>
-        <Button
-          title="Get Started Now"
-          onPress={() => navigation.navigate("Register")}
-          style={styles.primaryButton}
-        />
 
-        <TouchableOpacity
-          style={styles.secondaryButton}
-          onPress={() => navigation.navigate("Login")}
-        >
-          <Text style={styles.secondaryButtonText}>
-            Already have an account?
+      {/* Benefits Section */}
+      <View
+        style={[styles.benefitsSection, { backgroundColor: theme.surface }]}
+      >
+        <Text style={[styles.benefitsTitle, { color: theme.text.primary }]}>
+          Why Choose FocusEdge?
+        </Text>
+
+        {benefits.map((benefit, index) => (
+          <View
+            key={index}
+            style={[
+              styles.benefitItem,
+              index === benefits.length - 1 && styles.benefitItemLast,
+            ]}
+          >
+            <View
+              style={[
+                styles.benefitIconWrapper,
+                {
+                  backgroundColor:
+                    index === 0
+                      ? theme.accent.work + "15"
+                      : index === 1
+                      ? theme.accent.break + "15"
+                      : theme.primary + "15",
+                },
+              ]}
+            >
+              <MaterialIcons
+                name="check-circle"
+                size={24}
+                color={
+                  index === 0
+                    ? theme.accent.work
+                    : index === 1
+                    ? theme.accent.break
+                    : theme.primary
+                }
+              />
+            </View>
+            <Text style={[styles.benefitText, { color: theme.text.primary }]}>
+              {benefit}
+            </Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Footer */}
+      <View style={styles.footer}>
+        <View style={styles.footerContent}>
+          <Text style={[styles.footerText, { color: theme.text.secondary }]}>
+            Copyright{" "}
           </Text>
-          <Text style={styles.secondaryButtonLink}>Sign In Here</Text>
-        </TouchableOpacity>
+          <MaterialIcons
+            name="copyright"
+            size={13}
+            color={theme.text.secondary}
+            style={styles.copyrightIcon}
+          />
+          <Text style={[styles.footerText, { color: theme.text.secondary }]}>
+            {" "}
+          </Text>
+          <Text
+            style={[styles.footerLink, { color: theme.primary }]}
+            onPress={() => Linking.openURL("https://festimbunjaku.dev")}
+          >
+            Festim Bunjaku
+          </Text>
+        </View>
       </View>
     </ScrollView>
   );
@@ -165,287 +344,254 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
   },
   content: {
     flexGrow: 1,
-    paddingBottom: 30,
+    paddingBottom: 40,
   },
-  navBar: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingHorizontal: 24,
-    backgroundColor: "#8FA89E",
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    ...Platform.select({
-      web: {
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-      },
-      default: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        elevation: 5,
-      },
-    }),
-  },
-  navContent: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  navBrand: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#FFFFFF",
-    letterSpacing: -1,
-  },
-  navButtons: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  navButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#FFFFFF",
-  },
-  navButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-  navButtonPrimary: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#FFFFFF",
-  },
-  navButtonTextPrimary: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#8FA89E",
-  },
-  headerSection: {
-    paddingTop: 50,
-    paddingBottom: 40,
     paddingHorizontal: 24,
-    backgroundColor: "#8FA89E", // Changed from LinearGradient to solid color
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    paddingTop: Platform.OS === "ios" ? 60 : 40,
+    paddingBottom: 20,
+  },
+  brand: {
+    ...typography.styles.h3,
+  },
+  headerActions: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  headerButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 1.5,
+  },
+  headerButtonPrimary: {
+    borderWidth: 0,
+  },
+  headerButtonText: {
+    ...typography.styles.buttonSmall,
+  },
+  headerButtonTextPrimary: {
+    ...typography.styles.buttonSmall,
+    color: "#FFFFFF",
+  },
+  heroSection: {
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+  },
+  heroContent: {
+    alignItems: "center",
+  },
+  heroBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginBottom: 24,
+  },
+  heroBadgeText: {
+    ...typography.styles.caption,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  heroTitle: {
+    ...typography.styles.h1,
+    fontSize: 40,
+    letterSpacing: -1.2,
+    marginBottom: 16,
+    textAlign: "center",
+    lineHeight: 48,
+  },
+  heroDescription: {
+    ...typography.styles.bodyLarge,
+    fontSize: 17,
+    lineHeight: 26,
+    textAlign: "center",
+    marginBottom: 32,
+    maxWidth: 340,
+  },
+  highlightsContainer: {
+    flexDirection: "row",
+    gap: 12,
+    width: "100%",
+  },
+  highlightCard: {
+    flex: 1,
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    borderWidth: 1,
     ...Platform.select({
       web: {
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.06)",
       },
       default: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        elevation: 4,
+      },
+    }),
+  },
+  highlightIconWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  highlightValue: {
+    ...typography.styles.h4,
+    fontSize: 18,
+    marginBottom: 4,
+  },
+  highlightLabel: {
+    ...typography.styles.caption,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  featuresSection: {
+    paddingHorizontal: 24,
+    marginBottom: 32,
+  },
+  sectionHeader: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    ...typography.styles.h2,
+    fontSize: 28,
+    letterSpacing: -0.8,
+    marginBottom: 8,
+  },
+  sectionSubtitle: {
+    ...typography.styles.body,
+    fontWeight: "500",
+  },
+  featuresGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  featureCard: {
+    width: (width - 60) / 2,
+    minHeight: 180,
+    borderRadius: 24,
+    padding: 24,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    ...Platform.select({
+      web: {
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.06)",
+      },
+      default: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 16,
         elevation: 5,
       },
     }),
   },
-  heroSection: {
+  featureIconWrapper: {
+    width: 72,
+    height: 72,
+    borderRadius: 20,
+    justifyContent: "center",
     alignItems: "center",
-  },
-  emoji: {
-    fontSize: 64,
-    marginBottom: 12,
-  },
-  appTitle: {
-    fontSize: 44,
-    fontWeight: "800",
-    color: "#FFFFFF",
-    marginBottom: 4,
-    letterSpacing: -1,
-  },
-  tagline: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#E8F5E9",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "rgba(255, 255, 255, 0.8)",
-  },
-  mainContent: {
-    paddingHorizontal: 24,
-    paddingTop: 32,
-  },
-  valueSection: {
-    marginBottom: 36,
-  },
-  valueTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#2D3436",
-    marginBottom: 10,
-  },
-  valueDescription: {
-    fontSize: 15,
-    color: "#636E72",
-    lineHeight: 22,
-  },
-  featuresSection: {
-    marginBottom: 36,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#2D3436",
     marginBottom: 16,
   },
-  featureGrid: {
-    flexDirection: "row",
-    gap: 12,
+  featureTitle: {
+    ...typography.styles.h6,
+    marginBottom: 6,
+    textAlign: "center",
   },
-  featureColumn: {
-    flex: 1,
-    gap: 12,
+  featureDescription: {
+    ...typography.styles.bodySmall,
+    fontSize: 13,
+    textAlign: "center",
+    lineHeight: 18,
   },
-  featureCard: {
-    borderRadius: 16,
-    padding: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 140,
+  benefitsSection: {
+    marginHorizontal: 24,
+    borderRadius: 28,
+    padding: 32,
+    marginBottom: 32,
     ...Platform.select({
       web: {
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
       },
       default: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.1,
+        shadowRadius: 24,
+        elevation: 8,
       },
     }),
   },
-  featureCard1: {
-    backgroundColor: "#E8F5E9",
-    borderLeftWidth: 4,
-    borderLeftColor: "#8FA89E",
-  },
-  featureCard2: {
-    backgroundColor: "#FFF3E0",
-    borderLeftWidth: 4,
-    borderLeftColor: "#D4A373",
-  },
-  featureCard3: {
-    backgroundColor: "#F3E5F5",
-    borderLeftWidth: 4,
-    borderLeftColor: "#B19CD9",
-  },
-  featureCard4: {
-    backgroundColor: "#E3F2FD",
-    borderLeftWidth: 4,
-    borderLeftColor: "#7C8B9E",
-  },
-  featureIcon: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-  featureTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#2D3436",
-    marginBottom: 4,
-  },
-  featureDesc: {
-    fontSize: 12,
-    color: "#636E72",
-  },
-  statsSection: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 36,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E8E8E6",
-  },
-  statNumber: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "#8FA89E",
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 11,
-    fontWeight: "600",
-    color: "#A8B5C4",
-  },
-  benefitsSection: {
-    marginBottom: 36,
+  benefitsTitle: {
+    ...typography.styles.h3,
+    marginBottom: 24,
   },
   benefitItem: {
     flexDirection: "row",
-    marginBottom: 16,
-    alignItems: "flex-start",
+    alignItems: "center",
+    marginBottom: 20,
   },
-  benefitCheckbox: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: "#E8F5E9",
+  benefitItemLast: {
+    marginBottom: 0,
+  },
+  benefitIconWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
-    marginTop: 2,
+    marginRight: 16,
   },
-  checkmark: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#8FA89E",
-  },
-  benefitContent: {
+  benefitText: {
+    ...typography.styles.body,
+    fontWeight: "600",
     flex: 1,
   },
-  benefitTitle: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#2D3436",
-    marginBottom: 4,
-  },
-  benefitDesc: {
-    fontSize: 13,
-    color: "#636E72",
-    lineHeight: 18,
-  },
-  ctaSection: {
-    paddingHorizontal: 24,
-    gap: 12,
-  },
-  primaryButton: {
-    minHeight: 56,
-    borderRadius: 12,
-  },
-  secondaryButton: {
-    paddingVertical: 16,
-    borderRadius: 12,
+  footer: {
+    justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "#8FA89E",
-    backgroundColor: "rgba(143, 168, 158, 0.05)",
+    paddingVertical: 32,
+    paddingHorizontal: 24,
+    marginTop: 16,
   },
-  secondaryButtonText: {
+  footerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  footerText: {
+    ...typography.styles.bodySmall,
     fontSize: 13,
-    color: "#A8B5C4",
-    marginBottom: 2,
+    letterSpacing: 0.2,
+    lineHeight: 20,
   },
-  secondaryButtonLink: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#8FA89E",
+  copyrightIcon: {
+    marginHorizontal: 2,
+  },
+  footerLink: {
+    fontSize: 18,
+    fontFamily: typography.fontFamily.extraBold,
+    fontWeight: "800",
+    letterSpacing: 0.3,
+    lineHeight: 22,
   },
 });

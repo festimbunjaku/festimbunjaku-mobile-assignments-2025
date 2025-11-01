@@ -14,9 +14,8 @@ export const backgroundService = {
         stopOnTerminate: false,
         startOnBoot: true,
       });
-      console.log("Background task registered");
     } catch (error) {
-      console.error("Error registering background task:", error);
+      // Error registering background task
     }
   },
 
@@ -24,9 +23,8 @@ export const backgroundService = {
   async unregisterBackgroundTask() {
     try {
       await BackgroundFetch.unregisterTaskAsync(BACKGROUND_TASK_NAME);
-      console.log("Background task unregistered");
     } catch (error) {
-      console.error("Error unregistering background task:", error);
+      // Error unregistering background task
     }
   },
 
@@ -71,7 +69,6 @@ export const backgroundService = {
 
       return BackgroundFetch.BackgroundFetchResult.NewData;
     } catch (error) {
-      console.error("Error in background task:", error);
       return BackgroundFetch.BackgroundFetchResult.Failed;
     }
   },
@@ -83,7 +80,6 @@ TaskManager.defineTask(BACKGROUND_TASK_NAME, async () => {
     const result = await backgroundService.handleBackgroundTask();
     return result;
   } catch (error) {
-    console.error("Background task error:", error);
     return BackgroundFetch.BackgroundFetchResult.Failed;
   }
 });

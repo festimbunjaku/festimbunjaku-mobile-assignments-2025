@@ -50,13 +50,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
           .single();
 
         if (error) {
-          console.error("Error loading settings:", error);
           setSettings(null);
         } else {
           setSettings(data);
         }
       } catch (error) {
-        console.error("Error loading settings:", error);
         setSettings(null);
       } finally {
         setLoading(false);
@@ -79,7 +77,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setSettings({ ...settings, work_duration: minutes });
     } catch (error) {
-      console.error("Error updating work duration:", error);
+      // Error updating work duration
     }
   };
 
@@ -96,7 +94,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setSettings({ ...settings, break_duration: minutes });
     } catch (error) {
-      console.error("Error updating break duration:", error);
+      // Error updating break duration
     }
   };
 
@@ -113,7 +111,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setSettings({ ...settings, alarm_sound_enabled: enabled });
     } catch (error) {
-      console.error("Error updating alarm setting:", error);
+      // Error updating alarm setting
     }
   };
 
@@ -130,7 +128,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setSettings({ ...settings, dark_mode_enabled: enabled });
     } catch (error) {
-      console.error("Error updating dark mode:", error);
+      // Error updating dark mode
     }
   };
 

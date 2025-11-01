@@ -6,7 +6,10 @@ import {
   StyleSheet,
   TextInputProps,
   ViewStyle,
+  Platform,
 } from "react-native";
+import { useTheme } from "../../context/ThemeContext";
+import { typography } from "../../constants/typography";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -21,20 +24,26 @@ export const Input: React.FC<InputProps> = ({
   style,
   ...textInputProps
 }) => {
-  const inputStyles = [styles.input];
-  if (error) {
-    inputStyles.push(styles.inputError);
-  }
-  if (style) {
-    inputStyles.push(style);
-  }
+  const { theme } = useTheme();
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && (
+        <Text style={[styles.label, { color: theme.text.primary }]}>
+          {label}
+        </Text>
+      )}
       <TextInput
-        style={inputStyles}
-        placeholderTextColor="#A8B5C4"
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.surface,
+            borderColor: error ? "#E74C3C" : theme.border,
+            color: theme.text.primary,
+          },
+          style,
+        ]}
+        placeholderTextColor={theme.text.tertiary}
         {...textInputProps}
       />
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -47,27 +56,36 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#2D3436",
+    ...typography.styles.label,
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#E8E8E6",
     borderRadius: 12,
-    paddingVertical: 14,
     paddingHorizontal: 16,
-    fontSize: 16,
-    color: "#2D3436",
-    minHeight: 50,
-  },
-  inputError: {
-    borderColor: "#E74C3C",
+    fontFamily: typography.fontFamily.regular,
+    fontSize: typography.fontSize.base,
+    fontWeight: "400",
+    minHeight: 60,
+    margin: 0,
+    ...Platform.select({
+      ios: {
+        paddingTop: 12,
+        paddingBottom: 12,
+        lineHeight: 20,
+      },
+      android: {
+        paddingVertical: 0,
+        paddingTop: 0,
+        paddingBottom: 0,
+        lineHeight: undefined,
+        textAlignVertical: "center",
+        includeFontPadding: false,
+      },
+    }),
   },
   errorText: {
-    fontSize: 12,
+    ...typography.styles.caption,
     color: "#E74C3C",
     marginTop: 4,
   },

@@ -7,6 +7,8 @@ import {
   ViewStyle,
   TextStyle,
 } from "react-native";
+import { useTheme } from "../../context/ThemeContext";
+import { typography } from "../../constants/typography";
 
 interface ButtonProps {
   title: string;
@@ -27,26 +29,53 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   textStyle,
 }) => {
+  const { theme } = useTheme();
+
+  // Get primary button background color
+  const getPrimaryButtonBackground = () => {
+    return theme.primary;
+  };
+
   const getButtonStyle = () => {
+    const dynamicStyles = {
+      buttonPrimary: { backgroundColor: getPrimaryButtonBackground() },
+      buttonSecondary: { backgroundColor: theme.secondary },
+      buttonOutline: {
+        backgroundColor: "transparent",
+        borderColor: theme.primary,
+      },
+      buttonDisabled: {
+        backgroundColor: theme.border,
+        opacity: 0.6,
+      },
+    };
+
     if (disabled || loading) {
-      return [styles.button, styles.buttonDisabled, style];
+      return [styles.button, dynamicStyles.buttonDisabled, style];
     }
 
     switch (variant) {
       case "secondary":
-        return [styles.button, styles.buttonSecondary, style];
+        return [styles.button, dynamicStyles.buttonSecondary, style];
       case "outline":
-        return [styles.button, styles.buttonOutline, style];
+        return [styles.button, styles.buttonOutline, dynamicStyles.buttonOutline, style];
       default:
-        return [styles.button, styles.buttonPrimary, style];
+        return [styles.button, dynamicStyles.buttonPrimary, style];
     }
   };
 
   const getTextStyle = () => {
+    // For primary and secondary buttons, use white text for contrast
+    // For outline buttons, use primary color
+    const dynamicTextStyles = {
+      text: { color: "#FFFFFF" }, // White text for colored buttons
+      textOutline: { color: theme.primary },
+    };
+
     if (variant === "outline") {
-      return [styles.text, styles.textOutline, textStyle];
+      return [styles.text, dynamicTextStyles.textOutline, textStyle];
     }
-    return [styles.text, textStyle];
+    return [styles.text, dynamicTextStyles.text, textStyle];
   };
 
   return (
@@ -74,27 +103,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     minHeight: 50,
   },
-  buttonPrimary: {
-    backgroundColor: "#7C8B9E",
-  },
-  buttonSecondary: {
-    backgroundColor: "#A8B5C4",
-  },
   buttonOutline: {
-    backgroundColor: "transparent",
     borderWidth: 2,
-    borderColor: "#7C8B9E",
-  },
-  buttonDisabled: {
-    backgroundColor: "#E8E8E6",
-    opacity: 0.6,
   },
   text: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  textOutline: {
-    color: "#7C8B9E",
+    ...typography.styles.button,
   },
 });

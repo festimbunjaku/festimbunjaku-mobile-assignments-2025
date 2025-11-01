@@ -48,7 +48,7 @@ export const TimerScreen: React.FC = () => {
       setSessionsCompleted(completed);
       setTotalFocusTime(focusTime);
     } catch (error) {
-      console.error("Error loading stats:", error);
+      // Error loading stats
     } finally {
       setLoading(false);
     }

@@ -7,13 +7,16 @@ import {
   Switch,
   Alert,
   Platform,
+  Linking,
 } from "react-native";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { useAuth } from "../hooks/useAuth";
 import { useSettings } from "../context/SettingsContext";
 import { useTheme } from "../context/ThemeContext";
 import { Button } from "../components/Common";
 import { soundManager } from "../utils";
+import { typography } from "../constants/typography";
 
 export const SettingsScreen: React.FC = () => {
   const { signOut, user } = useAuth();
@@ -34,23 +37,19 @@ export const SettingsScreen: React.FC = () => {
         soundManager.stopAlarm();
       }, 2000);
     } catch (error) {
-      console.error("Error playing test sound:", error);
-      Alert.alert("Error", "Could not play test sound. Please ensure alarm sound file exists.");
+      Alert.alert(
+        "Error",
+        "Could not play test sound. Please ensure alarm sound file exists."
+      );
     }
   };
 
   const handleLogout = () => {
-    console.log("🟡 [SETTINGS] Logout button pressed - handleLogout called");
-    console.log("🟡 [SETTINGS] Platform:", Platform.OS);
-
     // Use window.confirm on web, Alert.alert on native platforms
     if (Platform.OS === "web") {
       const confirmed = window.confirm("Are you sure you want to logout?");
       if (confirmed) {
-        console.log("🟡 [SETTINGS] User confirmed logout (web)");
         handleLogoutConfirmed();
-      } else {
-        console.log("🟡 [SETTINGS] Logout cancelled (web)");
       }
     } else {
       // iOS and Android use Alert.alert
@@ -61,14 +60,11 @@ export const SettingsScreen: React.FC = () => {
           {
             text: "Cancel",
             style: "cancel",
-            onPress: () =>
-              console.log("🟡 [SETTINGS] Logout cancelled (native)"),
           },
           {
             text: "Logout",
             style: "destructive",
             onPress: () => {
-              console.log("🟡 [SETTINGS] User confirmed logout (native)");
               handleLogoutConfirmed();
             },
           },
@@ -80,21 +76,11 @@ export const SettingsScreen: React.FC = () => {
 
   const handleLogoutConfirmed = async () => {
     try {
-      console.log("🟡 [SETTINGS] About to call signOut...");
       await signOut();
-      console.log("🟡 [SETTINGS] signOut returned");
     } catch (error) {
-      console.error("🟡 [SETTINGS] Error during logout:", error);
       Alert.alert("Failed to logout", "Please try again.");
     }
   };
-
-  console.log(
-    "🟡 [SETTINGS] Rendering SettingsScreen, user:",
-    user?.email,
-    "settings loaded:",
-    !!settings
-  );
 
   const dynamicStyles = {
     container: [styles.container, { backgroundColor: theme.background }],
@@ -126,7 +112,15 @@ export const SettingsScreen: React.FC = () => {
       {settings ? (
         <>
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>⏱️ Timer Settings</Text>
+            <View style={styles.sectionHeader}>
+              <MaterialIcons
+                name="timer"
+                size={20}
+                color={theme.text.primary}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={dynamicStyles.sectionTitle}>Timer Settings</Text>
+            </View>
 
             {/* Work Duration */}
             <View style={dynamicStyles.card}>
@@ -179,7 +173,15 @@ export const SettingsScreen: React.FC = () => {
 
           {/* Sound Settings */}
           <View style={styles.section}>
-            <Text style={dynamicStyles.sectionTitle}>🔔 Sound</Text>
+            <View style={styles.sectionHeader}>
+              <Ionicons
+                name="notifications"
+                size={20}
+                color={theme.text.primary}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={dynamicStyles.sectionTitle}>Sound</Text>
+            </View>
             <View style={dynamicStyles.card}>
               <View style={styles.toggleRow}>
                 <Text style={dynamicStyles.label}>Alarm Sound</Text>
@@ -205,8 +207,16 @@ export const SettingsScreen: React.FC = () => {
           </View>
 
           {/* Appearance Settings */}
-          <View style={styles.section}>
-            <Text style={dynamicStyles.sectionTitle}>🎨 Appearance</Text>
+          <View style={[styles.section, styles.appearanceSection]}>
+            <View style={styles.sectionHeader}>
+              <MaterialIcons
+                name="palette"
+                size={20}
+                color={theme.text.primary}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={dynamicStyles.sectionTitle}>Appearance</Text>
+            </View>
             <View style={dynamicStyles.card}>
               <View style={styles.toggleRow}>
                 <Text style={dynamicStyles.label}>Dark Mode</Text>
@@ -222,14 +232,28 @@ export const SettingsScreen: React.FC = () => {
               </View>
             </View>
           </View>
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            <View style={styles.footerContent}>
+              <Text
+                style={[styles.footerText, { color: theme.text.secondary }]}
+              >
+                Built by{" "}
+              </Text>
+              <Text
+                style={[styles.footerLink, { color: theme.primary }]}
+                onPress={() => Linking.openURL("https://festimbunjaku.dev")}
+              >
+                Festim Bunjaku
+              </Text>
+            </View>
+          </View>
         </>
       ) : (
         <View style={styles.section}>
           <Text
-            style={[
-              { textAlign: "center" },
-              { color: theme.text.secondary },
-            ]}
+            style={[{ textAlign: "center" }, { color: theme.text.secondary }]}
           >
             Loading settings...
           </Text>
@@ -252,9 +276,17 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 24,
   },
+  appearanceSection: {
+    marginBottom: 0,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
+    marginBottom: 12,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
   },
   card: {
@@ -299,5 +331,31 @@ const styles = StyleSheet.create({
   },
   testButton: {
     marginTop: 0,
+  },
+  footer: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+    paddingHorizontal: 24,
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  footerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  footerText: {
+    ...typography.styles.bodySmall,
+    fontSize: 12,
+    letterSpacing: 0.1,
+    lineHeight: 18,
+  },
+  footerLink: {
+    fontSize: 14,
+    fontFamily: typography.fontFamily.bold,
+    fontWeight: "700",
+    letterSpacing: 0.2,
+    lineHeight: 20,
   },
 });

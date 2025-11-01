@@ -1,197 +1,310 @@
-# 🍅 Pomodoro Timer App
+# FocusEdge
 
-A minimalistic Pomodoro timer mobile app with focus statistics, built with React Native (Expo), TypeScript, and Supabase.
+A modern, feature-rich Pomodoro Technique timer application built with React Native and Expo. FocusEdge helps you boost productivity through focused work sessions with customizable timers, detailed analytics, and beautiful UI design.
 
 ## ✨ Features
 
-- ⏱️ **Customizable Timer**: 30min work / 10min break (default)
-- 🎯 **Focus Tracking**: Track sessions and focus time
-- 📊 **Statistics**: View your productivity stats and graphs
-- 📜 **30-Day History**: See all your past sessions
-- 🌙 **Dark Mode**: Easy on the eyes
-- 🔔 **Alarm Sounds**: Get notified when sessions complete
-- 🔒 **Secure Auth**: Email/password authentication with Supabase RLS
-- 📱 **Native iOS**: Optimized for iOS devices
+- 🎯 **Smart Timer System**
 
-## 🚀 Getting Started
+  - Customizable work and break durations (1-60 minutes)
+  - Visual session indicators
+  - Background timer support
+  - Alarm sound notifications
 
-### Prerequisites
+- 📊 **Analytics & Statistics**
 
-- Node.js (v16 or higher)
-- npm or yarn
-- Expo CLI
-- iOS Simulator (Xcode) or physical iOS device
-- Supabase account
+  - Track your productivity over time
+  - Visual charts and graphs
+  - Session history with detailed insights
+  - Weekly and monthly statistics
 
-### Installation
+- 🎨 **Modern UI/UX**
 
-1. **Clone the repository**
+  - Beautiful, clean interface
+  - Light and dark mode support
+  - Custom brown theme palette
+  - Smooth animations and transitions
+  - Responsive design for all screen sizes
 
-   ```bash
-   cd pomodoro-app
-   ```
+- 👤 **User Authentication**
 
-2. **Install dependencies**
+  - Secure user accounts via Supabase
+  - Email and password authentication
+  - Persistent login sessions
+  - User-specific settings and data
 
-   ```bash
-   npm install
-   ```
+- ⚙️ **Customizable Settings**
 
-3. **Setup Environment Variables**
+  - Adjustable work/break durations
+  - Enable/disable alarm sounds
+  - Dark mode toggle
+  - Test sound functionality
 
-   Copy your Supabase credentials into `.env`:
+- 📱 **Cross-Platform**
+  - iOS support
+  - Android support
+  - Web support
+  - Expo Go compatible
 
-   ```env
-   EXPO_PUBLIC_SUPABASE_URL=your-supabase-url
-   EXPO_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-   ```
+## 🛠️ Tech Stack
 
-   Find these in your Supabase project: **Settings → API**
+- **Framework**: React Native 0.81.5
+- **Platform**: Expo ~54.0.20
+- **Language**: TypeScript 5.9.2
+- **Navigation**: React Navigation 7.x
+- **State Management**: React Context API
+- **Backend**: Supabase
+- **Storage**: AsyncStorage
+- **Fonts**: Inter (via @expo-google-fonts/inter)
+- **Icons**: Expo Vector Icons
 
-4. **Setup Supabase Database**
+## 📋 Prerequisites
 
-   The database tables and policies are already created if you ran the SQL scripts. If not, see the `PLAN.md` file for the complete database schema.
+Before you begin, ensure you have the following installed:
 
-5. **Add Alarm Sound (Optional)**
+- **Node.js** (v18.x or higher) - [Download](https://nodejs.org/)
+- **npm** - Comes with Node.js
+- **Expo Go App** - [iOS App Store](https://apps.apple.com/app/expo-go/id982107779) | [Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)
 
-   Place an alarm sound file at: `src/assets/sounds/alarm.mp3`
+### For iOS Development (macOS only):
 
-### Running the App
+- **Xcode** (latest version) - [Download from App Store](https://apps.apple.com/us/app/xcode/id497799835)
+- **CocoaPods** - Install: `sudo gem install cocoapods`
 
-**Start Development Server:**
+### For Android Development:
+
+- **Android Studio** - [Download](https://developer.android.com/studio)
+- **Android SDK** and **Platform Tools**
+- **Java JDK** (11 or higher)
+
+## 🚀 Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/festimbunjaku/festimbunjaku-mobile-assignments-2025/tree/claim-topic-05
+cd festimbunjaku-mobile-assignments-2025/pomodoro-app
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Set Up Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+**Note**: Get your Supabase credentials from your [Supabase Dashboard](https://app.supabase.com/).
+
+### 4. Install iOS Dependencies (macOS only)
+
+If you're planning to run on iOS:
+
+```bash
+cd ios
+pod install
+cd ..
+```
+
+## 🏃 Running the Application
+
+### Quick Start
+
+Start the Expo development server:
 
 ```bash
 npm start
 ```
 
-**Run on iOS Simulator:**
+This will open the **Expo Developer Tools** in your browser, displaying a QR code and providing all the options you need:
+
+- **Press `i`** - Run on iOS Simulator (macOS only)
+- **Press `a`** - Run on Android Emulator/Device
+- **Press `w`** - Run on Web Browser
+- **Scan QR Code** - Open in Expo Go app on your physical device
+
+Alternatively, you can use the menu options in the Expo Developer Tools interface to select your preferred platform.
+
+### Running on Physical Devices with Expo Go
+
+1. **Install Expo Go** on your mobile device:
+
+   - [iOS App Store](https://apps.apple.com/app/expo-go/id982107779)
+   - [Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)
+
+2. **Connect to the same network**: Ensure your computer and mobile device are on the same Wi-Fi network.
+
+3. **Scan the QR code**:
+   - **iOS**: Open the Camera app and scan the QR code from the terminal or browser
+   - **Android**: Open the Expo Go app and tap "Scan QR code"
+
+### Alternative: Direct Platform Commands
+
+While `npm start` provides all options in one place, you can also use these direct commands:
+
+**iOS Simulator** (macOS only):
 
 ```bash
 npm run ios
 ```
 
-**Run on iOS Device:**
+**Android Emulator/Device** (make sure emulator is running first):
 
 ```bash
-npx expo run:ios
+npm run android
+```
+
+**Web Browser**:
+
+```bash
+npm run web
 ```
 
 ## 📁 Project Structure
 
 ```
 pomodoro-app/
+├── assets/                 # App icons and images
 ├── src/
-│   ├── components/          # Reusable UI components
-│   │   ├── Timer/          # Timer-specific components (to be built)
-│   │   ├── Stats/          # Stats components (to be built)
-│   │   ├── History/        # History components (to be built)
-│   │   └── Common/         # Common UI components (Button, Input, etc.)
-│   ├── screens/            # App screens
-│   │   ├── Auth/           # Login & Register screens
+│   ├── components/         # Reusable UI components
+│   │   ├── Common/        # Common components (Button, Input, etc.)
+│   │   ├── Timer/         # Timer-specific components
+│   │   ├── Stats/         # Statistics components
+│   │   └── History/       # History components
+│   ├── constants/         # App constants (colors, typography, defaults)
+│   ├── context/           # React Context providers
+│   │   ├── AuthContext.tsx
+│   │   ├── SettingsContext.tsx
+│   │   └── ThemeContext.tsx
+│   ├── hooks/             # Custom React hooks
+│   │   ├── useAuth.ts
+│   │   ├── useStats.ts
+│   │   └── useTimer.ts
+│   ├── navigation/        # Navigation configuration
+│   │   ├── AuthNavigator.tsx
+│   │   ├── MainNavigator.tsx
+│   │   └── UnauthNavigator.tsx
+│   ├── screens/           # Screen components
+│   │   ├── Auth/         # Authentication screens
+│   │   ├── HomeScreen.tsx
 │   │   ├── TimerScreen.tsx
 │   │   ├── StatsScreen.tsx
 │   │   ├── HistoryScreen.tsx
 │   │   └── SettingsScreen.tsx
-│   ├── navigation/         # Navigation configuration
-│   ├── services/           # Business logic & API
-│   ├── hooks/              # Custom React hooks
-│   ├── context/            # React Context providers
-│   ├── types/              # TypeScript type definitions
-│   ├── utils/              # Helper functions
-│   ├── constants/          # App constants (colors, defaults)
-│   └── assets/             # Static assets (sounds, images)
-├── App.tsx                 # Root component
-└── .env                    # Environment variables (not in git)
+│   ├── services/          # API and service integrations
+│   │   ├── supabase.ts
+│   │   ├── storage.service.ts
+│   │   ├── timer.service.ts
+│   │   └── background.service.ts
+│   ├── types/             # TypeScript type definitions
+│   └── utils/             # Utility functions
+│       ├── soundManager.ts
+│       ├── dateUtils.ts
+│       └── timeFormatter.ts
+├── App.tsx                # Main app component
+├── app.json              # Expo configuration
+├── package.json          # Dependencies and scripts
+└── tsconfig.json         # TypeScript configuration
 ```
 
-## 🎨 Design System
+## ⚙️ Configuration
 
-### Light Mode Colors
+### Supabase Setup
 
-- Background: `#F7F7F5` (Soft off-white)
-- Primary: `#7C8B9E` (Muted blue-gray)
-- Work Accent: `#8FA89E` (Muted sage green)
-- Break Accent: `#D4A373` (Muted terracotta)
+1. Create a new project at [Supabase](https://app.supabase.com/)
+2. Go to Settings → API to get your credentials
+3. Create the following tables in your Supabase database:
 
-### Dark Mode Colors
+**Users Table** (usually created automatically by Supabase Auth)
 
-- Background: `#1C1C1E` (Very dark gray)
-- Primary: `#8FA8BC` (Lighter muted blue)
-- Work Accent: `#9BB8A7` (Lighter sage)
-- Break Accent: `#D9B896` (Lighter terracotta)
+**Sessions Table**:
 
-## 🔐 Authentication
+```sql
+CREATE TABLE sessions (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  work_duration INTEGER NOT NULL,
+  break_duration INTEGER NOT NULL,
+  completed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
 
-- Email/password authentication via Supabase
-- Row Level Security (RLS) enabled on all tables
-- Default settings auto-created on registration
-- Secure session management with AsyncStorage
+**Settings Table**:
 
-## 📦 Tech Stack
+```sql
+CREATE TABLE user_settings (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE UNIQUE,
+  work_duration INTEGER DEFAULT 25,
+  break_duration INTEGER DEFAULT 5,
+  alarm_sound_enabled BOOLEAN DEFAULT true,
+  dark_mode_enabled BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
 
-- **Framework**: React Native + Expo
-- **Language**: TypeScript
-- **Backend**: Supabase (PostgreSQL + Auth)
-- **Navigation**: React Navigation
-- **Storage**: AsyncStorage
-- **Charts**: react-native-chart-kit
-- **Audio**: expo-av
-- **Background Tasks**: expo-task-manager
+4. Update Row Level Security (RLS) policies as needed for your use case.
 
-## 🛠️ Development Status
+### Sound Files
 
-### ✅ Completed
+Alarm sounds should be placed in `src/assets/sounds/` directory. The default alarm file is `alarm.mp3`.
 
-- Project setup and configuration
-- Folder structure
-- TypeScript types
-- Supabase client configuration
-- Authentication flow (Login/Register)
-- Navigation structure (Auth + Main tabs)
-- Common UI components (Button, Input, LoadingSpinner)
-- Utility functions (time formatting, date utils)
-- Database schema and RLS policies
+## 🏗️ Building for Production
 
-### 🚧 In Progress / To Do
-
-- Timer functionality with pause/resume
-- Background timer support
-- Session tracking and database integration
-- Statistics screen with charts
-- History screen with session list
-- Full settings screen (duration sliders, toggles)
-- Theme system (dark mode)
-- Sound management
-- Performance optimization
-
-## 📝 Scripts
+### iOS Build
 
 ```bash
-npm start          # Start Expo development server
-npm run android    # Run on Android
-npm run ios        # Run on iOS
-npm run web        # Run on web browser
+expo build:ios
 ```
 
-## 🧪 Testing
+Or using EAS Build:
 
-1. **Authentication**: Register a new account and login
-2. **Database**: Verify profile and settings are auto-created
-3. **Navigation**: Test navigation between tabs
-4. **Logout**: Test logout functionality in Settings
+```bash
+npm install -g eas-cli
+eas build --platform ios
+```
 
-## 📖 Documentation
+### Android Build
 
-See `PLAN.md` for the complete implementation plan, database schema, and feature specifications.
+```bash
+expo build:android
+```
 
-## 🤝 Contributing
+## 📝 Available Scripts
 
-This is a personal project for learning and portfolio purposes.
+- `npm start` - Start the Expo development server
+- `npm run ios` - Run on iOS simulator
+- `npm run android` - Run on Android emulator/device
+- `npm run web` - Run on web browser
+
 
 ## 📄 License
 
-MIT
+This project is private and proprietary. All rights reserved.
+
+## 👨‍💻 Author
+
+**Festim Bunjaku**
+
+- Website: [festimbunjaku.dev](https://festimbunjaku.dev)
+- GitHub: [@festimbunjaku](https://github.com/festimbunjaku)
+
+## 🙏 Acknowledgments
+
+- Built with [Expo](https://expo.dev/)
+- UI components styled with React Native
+- Backend powered by [Supabase](https://supabase.com/)
+- Fonts provided by [Google Fonts](https://fonts.google.com/)
 
 ---
 
-**Built with ❤️ using React Native + Expo + Supabase**
+Made with ❤️ using React Native and Expo

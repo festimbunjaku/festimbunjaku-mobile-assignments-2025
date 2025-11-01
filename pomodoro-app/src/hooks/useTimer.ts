@@ -70,7 +70,7 @@ export const useTimer = (options: UseTimerOptions = {}) => {
         );
         await backgroundService.registerBackgroundTask();
       } catch (error) {
-        console.warn("Background tasks not available:", error);
+        // Background tasks not available
       }
     };
 
@@ -206,9 +206,7 @@ export const useTimer = (options: UseTimerOptions = {}) => {
       completed_at: isCompleted ? now.toISOString() : undefined,
     });
 
-    if (!updatedSession) {
-      console.error("Failed to update session");
-    }
+    // Session updated or failed
 
     // Reset timer
     const nextSessionType: SessionType =

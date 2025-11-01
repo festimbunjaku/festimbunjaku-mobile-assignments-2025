@@ -9,8 +9,10 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "../../hooks/useAuth";
 import { Button, Input } from "../../components/Common";
+import { useTheme } from "../../context/ThemeContext";
 
 interface RegisterScreenProps {
   navigation: any;
@@ -20,6 +22,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   navigation,
 }) => {
   const { signUp } = useAuth();
+  const { theme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -67,7 +70,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
     setLoading(false);
 
     if (error) {
-      console.error("Registration error:", error);
       let errorMessage = "Could not create account";
       
       if (error.message) {
@@ -94,7 +96,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -102,8 +104,8 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       >
         <View style={styles.content}>
           <View style={styles.header}>
-            <Text style={styles.title}>Create Account</Text>
-            <Text style={styles.subtitle}>Start your focus journey today</Text>
+            <Text style={[styles.title, { color: theme.text.primary }]}>Create Account</Text>
+            <Text style={[styles.subtitle, { color: theme.text.secondary }]}>Start your focus journey today</Text>
           </View>
 
           <View style={styles.form}>
@@ -149,13 +151,22 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
           </View>
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Already have an account? </Text>
+            <Text style={[styles.footerText, { color: theme.text.secondary }]}>Already have an account? </Text>
             <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-              <Text style={styles.footerLink}>Sign In</Text>
+              <Text style={[styles.footerLink, { color: theme.primary }]}>Sign In</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+
+      <View style={styles.homeFooter}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Home")}
+          style={styles.homeButton}
+        >
+          <MaterialIcons name="home" size={24} color={theme.primary} />
+        </TouchableOpacity>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -163,7 +174,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F7F7F5",
   },
   scrollContent: {
     flexGrow: 1,
@@ -179,12 +189,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "700",
-    color: "#2D3436",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#636E72",
   },
   form: {
     marginBottom: 24,
@@ -199,11 +207,25 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 14,
-    color: "#636E72",
   },
   footerLink: {
     fontSize: 14,
-    color: "#7C8B9E",
     fontWeight: "600",
+  },
+  homeFooter: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: Platform.OS === "ios" ? 34 : 16,
+    paddingTop: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "transparent",
+  },
+  homeButton: {
+    padding: 12,
+    borderRadius: 50,
+    backgroundColor: "transparent",
   },
 });

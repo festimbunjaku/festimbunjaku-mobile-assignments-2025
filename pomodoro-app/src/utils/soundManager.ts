@@ -28,16 +28,13 @@ class SoundManager {
       } catch (soundError) {
         // Only warn once to avoid spam
         if (!this.hasWarned) {
-          console.warn(
-            "Alarm sound file not found. Please add alarm.mp3 to src/assets/sounds/"
-          );
           this.hasWarned = true;
         }
         // Mark as loaded to prevent repeated attempts
         this.isLoaded = true;
       }
     } catch (error) {
-      console.error("Error configuring audio:", error);
+      // Error configuring audio
     }
   }
 
@@ -51,7 +48,7 @@ class SoundManager {
         await this.sound.replayAsync();
       }
     } catch (error) {
-      console.error("Error playing alarm:", error);
+      // Error playing alarm
     }
   }
 
@@ -61,7 +58,7 @@ class SoundManager {
         await this.sound.stopAsync();
       }
     } catch (error) {
-      console.error("Error stopping alarm:", error);
+      // Error stopping alarm
     }
   }
 
@@ -73,7 +70,7 @@ class SoundManager {
         this.isLoaded = false;
       }
     } catch (error) {
-      console.error("Error unloading sound:", error);
+      // Error unloading sound
     }
   }
 }
