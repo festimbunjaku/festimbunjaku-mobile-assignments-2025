@@ -302,3 +302,6 @@ make the ui better
 add at the top right a register and login button that navigsates me to these pages
 
 make a commit now in my branche of what we did until now and what is a todo for the next days 
+
+look where we left from plan md and comtinue implementiong the features until it is completed
+

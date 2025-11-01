@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { TimerState } from "../../types";
+import { useTheme } from "../../context/ThemeContext";
 
 interface SessionIndicatorProps {
   timerState: TimerState;
@@ -13,6 +14,7 @@ export const SessionIndicator: React.FC<SessionIndicatorProps> = ({
   sessionsCompleted,
   totalFocusTime,
 }) => {
+  const { theme } = useTheme();
   const formatFocusTime = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -24,33 +26,54 @@ export const SessionIndicator: React.FC<SessionIndicatorProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.surface,
+          borderColor: theme.border,
+        },
+      ]}
+    >
       <View style={styles.stat}>
-        <Text style={styles.statValue}>{sessionsCompleted}</Text>
-        <Text style={styles.statLabel}>Sessions</Text>
+        <Text style={[styles.statValue, { color: theme.text.primary }]}>
+          {sessionsCompleted}
+        </Text>
+        <Text style={[styles.statLabel, { color: theme.text.secondary }]}>
+          Sessions
+        </Text>
       </View>
 
-      <View style={styles.divider} />
+      <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
       <View style={styles.stat}>
-        <Text style={styles.statValue}>{formatFocusTime(totalFocusTime)}</Text>
-        <Text style={styles.statLabel}>Focus Time</Text>
+        <Text style={[styles.statValue, { color: theme.text.primary }]}>
+          {formatFocusTime(totalFocusTime)}
+        </Text>
+        <Text style={[styles.statLabel, { color: theme.text.secondary }]}>
+          Focus Time
+        </Text>
       </View>
 
-      <View style={styles.divider} />
+      <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
       <View style={styles.stat}>
         <Text
           style={[
             styles.statValue,
             {
-              color: timerState.sessionType === "work" ? "#8FA89E" : "#D4A373",
+              color:
+                timerState.sessionType === "work"
+                  ? theme.accent.work
+                  : theme.accent.break,
             },
           ]}
         >
           {timerState.sessionType === "work" ? "Work" : "Break"}
         </Text>
-        <Text style={styles.statLabel}>Type</Text>
+        <Text style={[styles.statLabel, { color: theme.text.secondary }]}>
+          Type
+        </Text>
       </View>
     </View>
   );
@@ -59,7 +82,6 @@ export const SessionIndicator: React.FC<SessionIndicatorProps> = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 24,
@@ -67,7 +89,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     borderWidth: 1,
-    borderColor: "#E8E8E6",
   },
   stat: {
     alignItems: "center",
@@ -76,16 +97,13 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#2D3436",
   },
   statLabel: {
     fontSize: 12,
-    color: "#636E72",
     marginTop: 4,
   },
   divider: {
     width: 1,
     height: 30,
-    backgroundColor: "#E8E8E6",
   },
 });

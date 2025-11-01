@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import { TimerState } from "../../types";
 import { formatTime } from "../../utils";
+import { useTheme } from "../../context/ThemeContext";
 
 interface TimerDisplayProps {
   timerState: TimerState;
@@ -12,6 +13,7 @@ const CIRCLE_RADIUS = 90;
 const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 
 export const TimerDisplay: React.FC<TimerDisplayProps> = ({ timerState }) => {
+  const { theme } = useTheme();
   const progress =
     timerState.targetDuration > 0
       ? timerState.timeRemaining / timerState.targetDuration
@@ -19,7 +21,9 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({ timerState }) => {
   const strokeDashoffset = CIRCLE_CIRCUMFERENCE * (1 - progress);
 
   const getSessionColor = () => {
-    return timerState.sessionType === "work" ? "#8FA89E" : "#D4A373";
+    return timerState.sessionType === "work"
+      ? theme.accent.work
+      : theme.accent.break;
   };
 
   const getSessionLabel = () => {
@@ -35,7 +39,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({ timerState }) => {
             cx={130}
             cy={130}
             r={CIRCLE_RADIUS}
-            stroke="#E8E8E6"
+            stroke={theme.border}
             strokeWidth={8}
             fill="none"
           />
@@ -56,10 +60,12 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({ timerState }) => {
 
         {/* Time display */}
         <View style={styles.timeContainer}>
-          <Text style={styles.timeText}>
+          <Text style={[styles.timeText, { color: theme.text.primary }]}>
             {formatTime(timerState.timeRemaining)}
           </Text>
-          <Text style={styles.sessionLabel}>{getSessionLabel()}</Text>
+          <Text style={[styles.sessionLabel, { color: theme.text.secondary }]}>
+            {getSessionLabel()}
+          </Text>
         </View>
       </View>
 
@@ -71,10 +77,10 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({ timerState }) => {
             {
               color:
                 timerState.status === "running"
-                  ? "#7FB685"
+                  ? theme.accent.success
                   : timerState.status === "paused"
-                  ? "#C9A67A"
-                  : "#7C8B9E",
+                  ? theme.accent.warning
+                  : theme.text.tertiary,
             },
           ]}
         >
@@ -104,11 +110,9 @@ const styles = StyleSheet.create({
   timeText: {
     fontSize: 56,
     fontWeight: "700",
-    color: "#2D3436",
   },
   sessionLabel: {
     fontSize: 14,
-    color: "#636E72",
     marginTop: 8,
     fontWeight: "600",
   },

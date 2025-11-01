@@ -87,3 +87,4 @@ TaskManager.defineTask(BACKGROUND_TASK_NAME, async () => {
     return BackgroundFetch.BackgroundFetchResult.Failed;
   }
 });
+

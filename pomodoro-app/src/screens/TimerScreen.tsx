@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet, Alert } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 import { useSettings } from "../context/SettingsContext";
+import { useTheme } from "../context/ThemeContext";
 import { useTimer } from "../hooks/useTimer";
 import { timerService } from "../services/timer.service";
 import {
@@ -15,6 +16,7 @@ import { soundManager } from "../utils";
 export const TimerScreen: React.FC = () => {
   const { user } = useAuth();
   const { settings } = useSettings();
+  const { theme } = useTheme();
   const {
     timerState,
     startTimer,
@@ -67,12 +69,20 @@ export const TimerScreen: React.FC = () => {
   // Refresh stats when timer completes a session
   useEffect(() => {
     if (timerState.status === "completed") {
+      // Play alarm sound if enabled
+      if (settings?.alarm_sound_enabled) {
+        soundManager.playAlarm();
+      }
+
       // Show completion alert
       const sessionType = timerState.sessionType === "work" ? "Focus" : "Break";
       Alert.alert("Great Work!", `${sessionType} session completed!`, [
         {
           text: "OK",
           onPress: async () => {
+            // Stop alarm if still playing
+            soundManager.stopAlarm();
+
             // Update stats
             if (user) {
               const completed = await timerService.getTodaysSessionCount(
@@ -89,7 +99,7 @@ export const TimerScreen: React.FC = () => {
         },
       ]);
     }
-  }, [timerState.status]);
+  }, [timerState.status, settings?.alarm_sound_enabled, user, stopTimer]);
 
   // Load sound on mount
   useEffect(() => {
@@ -105,7 +115,7 @@ export const TimerScreen: React.FC = () => {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
       contentContainerStyle={styles.contentContainer}
       scrollEnabled={false}
     >
@@ -137,7 +147,6 @@ export const TimerScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F7F7F5",
   },
   contentContainer: {
     flexGrow: 1,

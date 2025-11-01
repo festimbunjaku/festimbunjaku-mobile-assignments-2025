@@ -8,6 +8,7 @@ import {
   FlatList,
 } from "react-native";
 import { useAuth } from "../hooks/useAuth";
+import { useTheme } from "../context/ThemeContext";
 import { timerService } from "../services/timer.service";
 import { formatTime, formatDuration } from "../utils";
 import {
@@ -20,6 +21,7 @@ import { Session } from "../types";
 
 export const HistoryScreen: React.FC = () => {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,34 +53,47 @@ export const HistoryScreen: React.FC = () => {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
       refreshControl={
         <RefreshControl refreshing={loading} onRefresh={fetchHistory} />
       }
     >
       {sessions.length === 0 ? (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyTitle}>No Sessions Yet</Text>
-          <Text style={styles.emptyText}>
+          <Text style={[styles.emptyTitle, { color: theme.text.primary }]}>
+            No Sessions Yet
+          </Text>
+          <Text style={[styles.emptyText, { color: theme.text.secondary }]}>
             Start a pomodoro session to see your history here
           </Text>
         </View>
       ) : (
         dates.map((date) => (
           <View key={date} style={styles.dateGroup}>
-            <Text style={styles.dateHeader}>
+            <Text style={[styles.dateHeader, { color: theme.text.secondary }]}>
               {formatSessionDate(date + "T00:00:00")}
             </Text>
 
             {groupedSessions[date].map((session) => (
-              <View key={session.id} style={styles.sessionItem}>
+              <View
+                key={session.id}
+                style={[
+                  styles.sessionItem,
+                  {
+                    backgroundColor: theme.surface,
+                    borderColor: theme.border,
+                  },
+                ]}
+              >
                 <View style={styles.sessionLeft}>
                   <View
                     style={[
                       styles.sessionTypeBadge,
                       {
                         backgroundColor:
-                          session.type === "work" ? "#8FA89E" : "#D4A373",
+                          session.type === "work"
+                            ? theme.accent.work
+                            : theme.accent.break,
                       },
                     ]}
                   >
@@ -87,24 +102,32 @@ export const HistoryScreen: React.FC = () => {
                     </Text>
                   </View>
                   <View>
-                    <Text style={styles.sessionTypeLabel}>
+                    <Text
+                      style={[styles.sessionTypeLabel, { color: theme.text.primary }]}
+                    >
                       {session.type === "work" ? "Focus" : "Break"}
                     </Text>
-                    <Text style={styles.sessionTime}>
+                    <Text
+                      style={[styles.sessionTime, { color: theme.text.secondary }]}
+                    >
                       {formatSessionTime(session.started_at)}
                     </Text>
                   </View>
                 </View>
 
                 <View style={styles.sessionRight}>
-                  <Text style={styles.sessionDuration}>
+                  <Text
+                    style={[styles.sessionDuration, { color: theme.text.primary }]}
+                  >
                     {formatDuration(session.duration)}
                   </Text>
                   <Text
                     style={[
                       styles.sessionStatus,
                       {
-                        color: session.is_completed ? "#7FB685" : "#C9A67A",
+                        color: session.is_completed
+                          ? theme.accent.success
+                          : theme.accent.warning,
                       },
                     ]}
                   >
@@ -123,7 +146,6 @@ export const HistoryScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F7F7F5",
     padding: 16,
   },
   emptyState: {
@@ -133,12 +155,10 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#2D3436",
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 14,
-    color: "#636E72",
     textAlign: "center",
   },
   dateGroup: {
@@ -147,19 +167,16 @@ const styles = StyleSheet.create({
   dateHeader: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#636E72",
     marginBottom: 8,
   },
   sessionItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 12,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#E8E8E6",
   },
   sessionLeft: {
     flexDirection: "row",
@@ -180,11 +197,9 @@ const styles = StyleSheet.create({
   sessionTypeLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#2D3436",
   },
   sessionTime: {
     fontSize: 12,
-    color: "#636E72",
     marginTop: 2,
   },
   sessionRight: {
@@ -193,7 +208,6 @@ const styles = StyleSheet.create({
   sessionDuration: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#2D3436",
   },
   sessionStatus: {
     fontSize: 12,

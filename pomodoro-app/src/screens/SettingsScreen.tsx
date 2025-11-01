@@ -11,10 +11,13 @@ import {
 import Slider from "@react-native-community/slider";
 import { useAuth } from "../hooks/useAuth";
 import { useSettings } from "../context/SettingsContext";
+import { useTheme } from "../context/ThemeContext";
 import { Button } from "../components/Common";
+import { soundManager } from "../utils";
 
 export const SettingsScreen: React.FC = () => {
   const { signOut, user } = useAuth();
+  const { theme } = useTheme();
   const {
     settings,
     updateWorkDuration,
@@ -22,6 +25,19 @@ export const SettingsScreen: React.FC = () => {
     updateAlarmEnabled,
     updateDarkMode,
   } = useSettings();
+
+  const handleTestSound = async () => {
+    try {
+      await soundManager.playAlarm();
+      // Stop after 2 seconds
+      setTimeout(() => {
+        soundManager.stopAlarm();
+      }, 2000);
+    } catch (error) {
+      console.error("Error playing test sound:", error);
+      Alert.alert("Error", "Could not play test sound. Please ensure alarm sound file exists.");
+    }
+  };
 
   const handleLogout = () => {
     console.log("🟡 [SETTINGS] Logout button pressed - handleLogout called");
@@ -80,14 +96,29 @@ export const SettingsScreen: React.FC = () => {
     !!settings
   );
 
+  const dynamicStyles = {
+    container: [styles.container, { backgroundColor: theme.background }],
+    sectionTitle: [styles.sectionTitle, { color: theme.text.primary }],
+    card: [
+      styles.card,
+      {
+        backgroundColor: theme.surface,
+        borderColor: theme.border,
+      },
+    ],
+    label: [styles.label, { color: theme.text.primary }],
+    value: [styles.value, { color: theme.primary }],
+    rangeLabel: [styles.rangeLabel, { color: theme.text.tertiary }],
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={dynamicStyles.container}>
       {/* Account Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
-        <View style={styles.card}>
-          <Text style={styles.label}>Email</Text>
-          <Text style={styles.value}>{user?.email}</Text>
+        <Text style={dynamicStyles.sectionTitle}>Account</Text>
+        <View style={dynamicStyles.card}>
+          <Text style={dynamicStyles.label}>Email</Text>
+          <Text style={dynamicStyles.value}>{user?.email}</Text>
         </View>
       </View>
 
@@ -98,10 +129,12 @@ export const SettingsScreen: React.FC = () => {
             <Text style={styles.sectionTitle}>⏱️ Timer Settings</Text>
 
             {/* Work Duration */}
-            <View style={styles.card}>
+            <View style={dynamicStyles.card}>
               <View style={styles.settingHeader}>
-                <Text style={styles.label}>Work Duration</Text>
-                <Text style={styles.value}>{settings.work_duration} min</Text>
+                <Text style={dynamicStyles.label}>Work Duration</Text>
+                <Text style={dynamicStyles.value}>
+                  {settings.work_duration} min
+                </Text>
               </View>
               <Slider
                 style={styles.slider}
@@ -110,20 +143,22 @@ export const SettingsScreen: React.FC = () => {
                 step={1}
                 value={settings.work_duration}
                 onValueChange={updateWorkDuration}
-                minimumTrackTintColor="#8FA89E"
-                maximumTrackTintColor="#E8E8E6"
+                minimumTrackTintColor={theme.accent.work}
+                maximumTrackTintColor={theme.border}
               />
               <View style={styles.rangeLabels}>
-                <Text style={styles.rangeLabel}>1 min</Text>
-                <Text style={styles.rangeLabel}>60 min</Text>
+                <Text style={dynamicStyles.rangeLabel}>1 min</Text>
+                <Text style={dynamicStyles.rangeLabel}>60 min</Text>
               </View>
             </View>
 
             {/* Break Duration */}
-            <View style={styles.card}>
+            <View style={dynamicStyles.card}>
               <View style={styles.settingHeader}>
-                <Text style={styles.label}>Break Duration</Text>
-                <Text style={styles.value}>{settings.break_duration} min</Text>
+                <Text style={dynamicStyles.label}>Break Duration</Text>
+                <Text style={dynamicStyles.value}>
+                  {settings.break_duration} min
+                </Text>
               </View>
               <Slider
                 style={styles.slider}
@@ -132,27 +167,38 @@ export const SettingsScreen: React.FC = () => {
                 step={1}
                 value={settings.break_duration}
                 onValueChange={updateBreakDuration}
-                minimumTrackTintColor="#D4A373"
-                maximumTrackTintColor="#E8E8E6"
+                minimumTrackTintColor={theme.accent.break}
+                maximumTrackTintColor={theme.border}
               />
               <View style={styles.rangeLabels}>
-                <Text style={styles.rangeLabel}>1 min</Text>
-                <Text style={styles.rangeLabel}>30 min</Text>
+                <Text style={dynamicStyles.rangeLabel}>1 min</Text>
+                <Text style={dynamicStyles.rangeLabel}>30 min</Text>
               </View>
             </View>
           </View>
 
           {/* Sound Settings */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🔔 Sound</Text>
-            <View style={styles.card}>
+            <Text style={dynamicStyles.sectionTitle}>🔔 Sound</Text>
+            <View style={dynamicStyles.card}>
               <View style={styles.toggleRow}>
-                <Text style={styles.label}>Alarm Sound</Text>
+                <Text style={dynamicStyles.label}>Alarm Sound</Text>
                 <Switch
                   value={settings.alarm_sound_enabled}
                   onValueChange={updateAlarmEnabled}
-                  trackColor={{ false: "#E8E8E6", true: "#8FA89E" }}
-                  thumbColor="#FFFFFF"
+                  trackColor={{
+                    false: theme.border,
+                    true: theme.accent.work,
+                  }}
+                  thumbColor={theme.surface}
+                />
+              </View>
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Test Sound"
+                  onPress={handleTestSound}
+                  variant="outline"
+                  style={styles.testButton}
                 />
               </View>
             </View>
@@ -160,15 +206,18 @@ export const SettingsScreen: React.FC = () => {
 
           {/* Appearance Settings */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🎨 Appearance</Text>
-            <View style={styles.card}>
+            <Text style={dynamicStyles.sectionTitle}>🎨 Appearance</Text>
+            <View style={dynamicStyles.card}>
               <View style={styles.toggleRow}>
-                <Text style={styles.label}>Dark Mode</Text>
+                <Text style={dynamicStyles.label}>Dark Mode</Text>
                 <Switch
                   value={settings.dark_mode_enabled}
                   onValueChange={updateDarkMode}
-                  trackColor={{ false: "#E8E8E6", true: "#8FA89E" }}
-                  thumbColor="#FFFFFF"
+                  trackColor={{
+                    false: theme.border,
+                    true: theme.accent.work,
+                  }}
+                  thumbColor={theme.surface}
                 />
               </View>
             </View>
@@ -176,7 +225,12 @@ export const SettingsScreen: React.FC = () => {
         </>
       ) : (
         <View style={styles.section}>
-          <Text style={{ textAlign: "center", color: "#7C8B9E" }}>
+          <Text
+            style={[
+              { textAlign: "center" },
+              { color: theme.text.secondary },
+            ]}
+          >
             Loading settings...
           </Text>
         </View>
@@ -193,7 +247,6 @@ export const SettingsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F7F7F5",
     padding: 16,
   },
   section: {
@@ -202,25 +255,20 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#2D3436",
     marginBottom: 12,
   },
   card: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#E8E8E6",
   },
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#2D3436",
   },
   value: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#7C8B9E",
   },
   settingHeader: {
     flexDirection: "row",
@@ -239,11 +287,17 @@ const styles = StyleSheet.create({
   },
   rangeLabel: {
     fontSize: 11,
-    color: "#A8B5C4",
   },
   toggleRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 12,
+  },
+  buttonContainer: {
+    marginTop: 8,
+  },
+  testButton: {
+    marginTop: 0,
   },
 });
