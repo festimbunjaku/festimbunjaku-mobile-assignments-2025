@@ -10,11 +10,13 @@ import {
 } from "@expo-google-fonts/inter";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
 import { SettingsProvider } from "./src/context/SettingsContext";
+import { ProfileProvider } from "./src/context/ProfileContext";
 import { ThemeProvider } from "./src/context/ThemeContext";
 import { UnauthNavigator } from "./src/navigation/UnauthNavigator";
 import { MainNavigator } from "./src/navigation/MainNavigator";
 import { ErrorBoundary, LoadingSpinner } from "./src/components/Common";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { errorTracker } from "./src/utils/errorTracker";
 
 // Simple loading component that doesn't require ThemeProvider
 function SimpleLoadingSpinner({ message }: { message?: string }) {
@@ -54,6 +56,16 @@ function AppContent() {
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
+  // Initialize error tracking
+  useEffect(() => {
+    // Initialize error tracker
+    // In production, you can pass a DSN for Sentry/Bugsnag here
+    errorTracker.init({
+      enabled: true,
+      // dsn: process.env.EXPO_PUBLIC_SENTRY_DSN, // Uncomment when ready
+    });
+  }, []);
+
   useEffect(() => {
     async function loadFonts() {
       try {
@@ -66,6 +78,10 @@ export default function App() {
         });
         setFontsLoaded(true);
       } catch (error) {
+        errorTracker.captureError(error, {
+          action: "loadFonts",
+          metadata: { error: String(error) },
+        });
         setFontsLoaded(true); // Continue even if fonts fail to load
       }
     }
@@ -80,6 +96,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
+        <ProfileProvider>
         <SettingsProvider>
           <ThemeProvider>
             <NavigationContainer>
@@ -87,6 +104,7 @@ export default function App() {
             </NavigationContainer>
           </ThemeProvider>
         </SettingsProvider>
+        </ProfileProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

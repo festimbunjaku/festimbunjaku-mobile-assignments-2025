@@ -15,8 +15,11 @@ import { typography } from "../constants/typography";
 
 const { width } = Dimensions.get("window");
 
+import { StackNavigationProp } from "@react-navigation/stack";
+import { UnauthStackParamList } from "../navigation/UnauthNavigator";
+
 interface HomeScreenProps {
-  navigation: any;
+  navigation: StackNavigationProp<UnauthStackParamList, "Home">;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {

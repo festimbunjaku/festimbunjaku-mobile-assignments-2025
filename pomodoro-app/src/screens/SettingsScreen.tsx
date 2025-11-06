@@ -19,7 +19,7 @@ import { soundManager } from "../utils";
 import { typography } from "../constants/typography";
 
 export const SettingsScreen: React.FC = () => {
-  const { signOut, user } = useAuth();
+  const { signOut } = useAuth();
   const { theme } = useTheme();
   const {
     settings,
@@ -27,6 +27,8 @@ export const SettingsScreen: React.FC = () => {
     updateBreakDuration,
     updateAlarmEnabled,
     updateDarkMode,
+    updateMeditationEnabled,
+    updateMeditationInterval,
   } = useSettings();
 
   const handleTestSound = async () => {
@@ -99,15 +101,6 @@ export const SettingsScreen: React.FC = () => {
 
   return (
     <ScrollView style={dynamicStyles.container}>
-      {/* Account Section */}
-      <View style={styles.section}>
-        <Text style={dynamicStyles.sectionTitle}>Account</Text>
-        <View style={dynamicStyles.card}>
-          <Text style={dynamicStyles.label}>Email</Text>
-          <Text style={dynamicStyles.value}>{user?.email}</Text>
-        </View>
-      </View>
-
       {/* Timer Settings */}
       {settings ? (
         <>
@@ -203,6 +196,66 @@ export const SettingsScreen: React.FC = () => {
                   style={styles.testButton}
                 />
               </View>
+            </View>
+          </View>
+
+          {/* Meditation Settings */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <MaterialIcons
+                name="self-improvement"
+                size={20}
+                color={theme.text.primary}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={dynamicStyles.sectionTitle}>Meditation</Text>
+            </View>
+            <View style={dynamicStyles.card}>
+              <View style={styles.toggleRow}>
+                <Text style={dynamicStyles.label}>Meditation Reminders</Text>
+                <Switch
+                  testID="meditation-toggle"
+                  value={settings.meditation_enabled ?? false}
+                  onValueChange={updateMeditationEnabled}
+                  trackColor={{
+                    false: theme.border,
+                    true: theme.accent.work,
+                  }}
+                  thumbColor={theme.surface}
+                />
+              </View>
+              {(settings.meditation_enabled ?? false) && (
+                <>
+                  <View style={styles.settingHeader}>
+                    <Text style={dynamicStyles.label}>Reminder Interval</Text>
+                    <Text style={dynamicStyles.value}>
+                      {settings.meditation_interval_minutes ?? 5} min
+                    </Text>
+                  </View>
+                  <Slider
+                    style={styles.slider}
+                    minimumValue={1}
+                    maximumValue={10}
+                    step={1}
+                    value={settings.meditation_interval_minutes ?? 5}
+                    onValueChange={updateMeditationInterval}
+                    minimumTrackTintColor={theme.accent.work}
+                    maximumTrackTintColor={theme.border}
+                  />
+                  <View style={styles.rangeLabels}>
+                    <Text style={dynamicStyles.rangeLabel}>1 min</Text>
+                    <Text style={dynamicStyles.rangeLabel}>10 min</Text>
+                  </View>
+                  <Text
+                    style={[
+                      styles.helpText,
+                      { color: theme.text.secondary },
+                    ]}
+                  >
+                    Get meditation reminders during Pomodoro work sessions
+                  </Text>
+                </>
+              )}
             </View>
           </View>
 
@@ -357,5 +410,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 0.2,
     lineHeight: 20,
+  },
+  helpText: {
+    fontSize: 12,
+    marginTop: 8,
+    fontStyle: "italic",
   },
 });

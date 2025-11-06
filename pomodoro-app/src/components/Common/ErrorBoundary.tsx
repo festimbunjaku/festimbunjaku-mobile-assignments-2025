@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button } from "./Button";
 import { useTheme } from "../../context/ThemeContext";
+import { errorTracker } from "../../utils/errorTracker";
 
 interface Props {
   children: ReactNode;
@@ -53,7 +54,13 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Error caught by boundary
+    // Log to error tracking service
+    errorTracker.captureError(error, {
+      action: "ErrorBoundary",
+      metadata: {
+        componentStack: errorInfo.componentStack,
+      },
+    });
   }
 
   handleReset = () => {

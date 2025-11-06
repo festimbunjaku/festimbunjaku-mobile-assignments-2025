@@ -10,6 +10,8 @@ interface SettingsContextType {
   updateBreakDuration: (minutes: number) => Promise<void>;
   updateAlarmEnabled: (enabled: boolean) => Promise<void>;
   updateDarkMode: (enabled: boolean) => Promise<void>;
+  updateMeditationEnabled: (enabled: boolean) => Promise<void>;
+  updateMeditationInterval: (minutes: number) => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(
@@ -50,11 +52,13 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
           .single();
 
         if (error) {
+          console.error("Error loading settings:", error);
           setSettings(null);
         } else {
           setSettings(data);
         }
       } catch (error) {
+        console.error("Error loading settings:", error);
         setSettings(null);
       } finally {
         setLoading(false);
@@ -77,7 +81,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setSettings({ ...settings, work_duration: minutes });
     } catch (error) {
-      // Error updating work duration
+      console.error("Error updating work duration:", error);
+      // Optionally: Send to error tracking service
     }
   };
 
@@ -94,7 +99,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setSettings({ ...settings, break_duration: minutes });
     } catch (error) {
-      // Error updating break duration
+      console.error("Error updating break duration:", error);
+      // Optionally: Send to error tracking service
     }
   };
 
@@ -111,7 +117,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setSettings({ ...settings, alarm_sound_enabled: enabled });
     } catch (error) {
-      // Error updating alarm setting
+      console.error("Error updating alarm setting:", error);
+      // Optionally: Send to error tracking service
     }
   };
 
@@ -128,7 +135,44 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setSettings({ ...settings, dark_mode_enabled: enabled });
     } catch (error) {
-      // Error updating dark mode
+      console.error("Error updating dark mode:", error);
+      // Optionally: Send to error tracking service
+    }
+  };
+
+  const updateMeditationEnabled = async (enabled: boolean) => {
+    if (!user || !settings) return;
+
+    try {
+      const { error } = await supabase
+        .from("settings")
+        .update({ meditation_enabled: enabled })
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      setSettings({ ...settings, meditation_enabled: enabled });
+    } catch (error) {
+      console.error("Error updating meditation setting:", error);
+      // Optionally: Send to error tracking service
+    }
+  };
+
+  const updateMeditationInterval = async (minutes: number) => {
+    if (!user || !settings) return;
+
+    try {
+      const { error } = await supabase
+        .from("settings")
+        .update({ meditation_interval_minutes: minutes })
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      setSettings({ ...settings, meditation_interval_minutes: minutes });
+    } catch (error) {
+      console.error("Error updating meditation interval:", error);
+      // Optionally: Send to error tracking service
     }
   };
 
@@ -139,6 +183,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     updateBreakDuration,
     updateAlarmEnabled,
     updateDarkMode,
+    updateMeditationEnabled,
+    updateMeditationInterval,
   };
 
   return (

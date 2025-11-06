@@ -6,7 +6,12 @@ const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || "";
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Missing Supabase environment variables");
+  const missing = [];
+  if (!supabaseUrl) missing.push("EXPO_PUBLIC_SUPABASE_URL");
+  if (!supabaseAnonKey) missing.push("EXPO_PUBLIC_SUPABASE_ANON_KEY");
+  throw new Error(
+    `Missing Supabase environment variables: ${missing.join(", ")}. Please check your .env file.`
+  );
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {

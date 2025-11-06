@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { timerService } from "../services/timer.service";
 import { storageService } from "../services/storage.service";
+import { meditationService } from "../services/meditation.service";
 import { useAuth } from "./useAuth";
+import { useSettings } from "../context/SettingsContext";
 import { TimerState, SessionType } from "../types";
 import { minutesToSeconds } from "../utils";
 
@@ -13,6 +15,7 @@ interface UseTimerOptions {
 
 export const useTimer = (options: UseTimerOptions = {}) => {
   const { user } = useAuth();
+  const { settings } = useSettings();
   const { workDuration = 30, breakDuration = 10 } = options;
 
   const [timerState, setTimerState] = useState<TimerState>({
@@ -132,6 +135,42 @@ export const useTimer = (options: UseTimerOptions = {}) => {
     };
   }, [timerState.status, timerState.timeRemaining]);
 
+  // Meditation service integration
+  useEffect(() => {
+    const meditationEnabled = settings?.meditation_enabled ?? false;
+    const meditationInterval = settings?.meditation_interval_minutes ?? 5;
+
+    // Only run meditation during work sessions
+    if (
+      meditationEnabled &&
+      timerState.status === "running" &&
+      timerState.sessionType === "work"
+    ) {
+      meditationService.start(meditationInterval);
+    } else if (
+      timerState.status !== "running" ||
+      timerState.sessionType !== "work"
+    ) {
+      // Stop meditation if timer is not running or not a work session
+      meditationService.stop();
+    }
+
+    // Update interval if it changes
+    if (meditationEnabled) {
+      meditationService.updateInterval(meditationInterval);
+    }
+
+    return () => {
+      // Cleanup on unmount
+      meditationService.stop();
+    };
+  }, [
+    timerState.status,
+    timerState.sessionType,
+    settings?.meditation_enabled,
+    settings?.meditation_interval_minutes,
+  ]);
+
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     appStateRef.current = nextAppState;
   };
@@ -171,6 +210,8 @@ export const useTimer = (options: UseTimerOptions = {}) => {
         status: "paused",
         pausedAt: now,
       }));
+      // Pause meditation service when timer pauses
+      meditationService.pause();
     }
   }, [timerState.status]);
 
@@ -187,6 +228,8 @@ export const useTimer = (options: UseTimerOptions = {}) => {
         totalPausedTime: prev.totalPausedTime + pausedDuration,
         pausedAt: null,
       }));
+      // Resume meditation service when timer resumes
+      meditationService.resume();
     }
   }, [timerState.status, timerState.pausedAt]);
 
@@ -207,6 +250,9 @@ export const useTimer = (options: UseTimerOptions = {}) => {
     });
 
     // Session updated or failed
+
+    // Reset meditation service when timer stops
+    meditationService.reset();
 
     // Reset timer
     const nextSessionType: SessionType =
@@ -229,6 +275,9 @@ export const useTimer = (options: UseTimerOptions = {}) => {
   }, [timerState, user, workDuration, breakDuration]);
 
   const resetTimer = useCallback(() => {
+    // Reset meditation service when timer resets
+    meditationService.reset();
+
     const nextSessionType: SessionType =
       timerState.sessionType === "work" ? "break" : "work";
     const nextDuration =

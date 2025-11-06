@@ -7,8 +7,8 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string) => Promise<{ error: unknown }>;
+  signIn: (email: string, password: string) => Promise<{ error: unknown }>;
   signOut: () => Promise<void>;
 }
 
@@ -38,11 +38,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session }, error }) => {
+        if (error) {
+          console.error("Error getting session:", error);
+        }
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to get session:", error);
+        setLoading(false);
+      });
 
     // Listen for auth changes
     const {
@@ -96,7 +105,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       return { error: null };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      console.error("Error during sign up:", error);
       return { error: error || { message: "An unexpected error occurred" } };
     }
   };

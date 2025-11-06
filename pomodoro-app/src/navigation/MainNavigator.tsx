@@ -6,7 +6,11 @@ import { TimerScreen } from "../screens/TimerScreen";
 import { StatsScreen } from "../screens/StatsScreen";
 import { HistoryScreen } from "../screens/HistoryScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
+import { ProfileScreen } from "../screens/ProfileScreen";
 import { useTheme } from "../context/ThemeContext";
+import { useProfile } from "../context/ProfileContext";
+import { useAuth } from "../hooks/useAuth";
+import { Avatar } from "../components/Common";
 import { typography } from "../constants/typography";
 
 export type MainTabParamList = {
@@ -14,12 +18,15 @@ export type MainTabParamList = {
   Stats: undefined;
   History: undefined;
   Settings: undefined;
+  Profile: undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export const MainNavigator: React.FC = () => {
   const { theme } = useTheme();
+  const { profile } = useProfile();
+  const { user } = useAuth();
 
   return (
     <Tab.Navigator
@@ -167,6 +174,32 @@ export const MainNavigator: React.FC = () => {
           ),
         }}
       />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconContainer}>
+              {focused && (
+                <View
+                  style={[
+                    styles.activeIndicator,
+                    {
+                      backgroundColor: theme.primary + "20",
+                    },
+                  ]}
+                />
+              )}
+              <Avatar
+                profilePictureUrl={profile?.profile_picture_url}
+                email={user?.email || ""}
+                size={focused ? 28 : 24}
+                style={styles.avatarIcon}
+              />
+            </View>
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };
@@ -186,5 +219,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     top: 0,
     left: 0,
+  },
+  avatarIcon: {
+    borderWidth: 0,
   },
 });

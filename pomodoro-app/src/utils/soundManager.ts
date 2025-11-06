@@ -17,8 +17,6 @@ class SoundManager {
       });
 
       // Load the alarm sound
-      // TODO: Add an actual sound file to src/assets/sounds/alarm.mp3
-      // For now, this will log a warning once but won't crash the app
       try {
         const { sound } = await Audio.Sound.createAsync(
           require("../assets/sounds/alarm.mp3")
@@ -28,13 +26,15 @@ class SoundManager {
       } catch (soundError) {
         // Only warn once to avoid spam
         if (!this.hasWarned) {
+          console.error("Error loading alarm sound:", soundError);
           this.hasWarned = true;
         }
         // Mark as loaded to prevent repeated attempts
         this.isLoaded = true;
       }
     } catch (error) {
-      // Error configuring audio
+      console.error("Error configuring audio:", error);
+      // Optionally: Send to error tracking service
     }
   }
 
@@ -48,7 +48,8 @@ class SoundManager {
         await this.sound.replayAsync();
       }
     } catch (error) {
-      // Error playing alarm
+      console.error("Error playing alarm:", error);
+      // Optionally: Send to error tracking service
     }
   }
 
@@ -58,7 +59,8 @@ class SoundManager {
         await this.sound.stopAsync();
       }
     } catch (error) {
-      // Error stopping alarm
+      console.error("Error stopping alarm:", error);
+      // Optionally: Send to error tracking service
     }
   }
 
@@ -70,8 +72,16 @@ class SoundManager {
         this.isLoaded = false;
       }
     } catch (error) {
-      // Error unloading sound
+      console.error("Error unloading sound:", error);
+      // Optionally: Send to error tracking service
     }
+  }
+
+  // Reset method for testing - allows tests to reset internal state
+  reset() {
+    this.sound = null;
+    this.isLoaded = false;
+    this.hasWarned = false;
   }
 }
 

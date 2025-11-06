@@ -14,8 +14,11 @@ import { useAuth } from "../../hooks/useAuth";
 import { Button, Input } from "../../components/Common";
 import { useTheme } from "../../context/ThemeContext";
 
+import { StackNavigationProp } from "@react-navigation/stack";
+import { UnauthStackParamList } from "../../navigation/UnauthNavigator";
+
 interface RegisterScreenProps {
-  navigation: any;
+  navigation: StackNavigationProp<UnauthStackParamList, "Register">;
 }
 
 export const RegisterScreen: React.FC<RegisterScreenProps> = ({

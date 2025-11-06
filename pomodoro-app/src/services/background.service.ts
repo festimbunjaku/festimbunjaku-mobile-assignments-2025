@@ -14,8 +14,11 @@ export const backgroundService = {
         stopOnTerminate: false,
         startOnBoot: true,
       });
-    } catch (error) {
-      // Error registering background task
+    } catch (error: unknown) {
+      // Background fetch is not available in Expo Go or if not configured
+      // This is expected behavior - silently fail without logging
+      // Background tasks are optional and will work in production builds
+      // Error is intentionally not logged as this is expected in development
     }
   },
 
@@ -24,7 +27,8 @@ export const backgroundService = {
     try {
       await BackgroundFetch.unregisterTaskAsync(BACKGROUND_TASK_NAME);
     } catch (error) {
-      // Error unregistering background task
+      console.error("Error unregistering background task:", error);
+      // Optionally: Send to error tracking service
     }
   },
 
@@ -69,6 +73,7 @@ export const backgroundService = {
 
       return BackgroundFetch.BackgroundFetchResult.NewData;
     } catch (error) {
+      console.error("Error handling background task:", error);
       return BackgroundFetch.BackgroundFetchResult.Failed;
     }
   },
@@ -80,6 +85,7 @@ TaskManager.defineTask(BACKGROUND_TASK_NAME, async () => {
     const result = await backgroundService.handleBackgroundTask();
     return result;
   } catch (error) {
+    console.error("Background task failed:", error);
     return BackgroundFetch.BackgroundFetchResult.Failed;
   }
 });

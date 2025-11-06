@@ -519,3 +519,95 @@ now commit the project with a commit message
 the commit message should be for all changes from the latest commit to this commit
 
 this is the final commit the final state of the project
+
+look at the testing plan and implement it step by step
+
+run the tests and fix them until all of them pass
+
+continue fixin the npm test untill all test pass
+
+fix the remaining tests
+
+continue with the best option based on best practices
+
+look at the @TESTING_PLAN.md  is everything implemented from the plan
+
+add the missing tests until all tests are done and pass 100%
+
+look at the test plans are there tests that we havent done yet for the project
+
+implement these
+
+are there other tests that need to be implemented
+
+implement all these tests one by one step by step and dont stop until all of them pass
+
+so there are no tests remaining from the plans
+
+look at the @QA_REPORT.md and compare if everything is implemented
+
+implement now everything from the @QA_IMPLEMENTATION_STATUS.md that are not done yet
+
+so everything is implemented from the qa report?
+
+now add a new feature i want to add like a meditaiton feature in the settings like a toggle where the user can check a meditation mark and he can specify every 1,2,3,4... minutes to get like a timer, and add tests to it. do you understand. have you questions on how to implement it?
+
+1 during the pomodoro sessions
+2 sound alert
+3 it should paised
+4 reset when the pomodoro ends
+
+the tests are failing, fix them
+
+@node (979-1014)  fix the error
+
+now we are going to add an option that each registered user can have a profile picture, have you questions on how i want to implement it?
+
+1 add a dedicated profile screen
+2 from the photo library
+3 supabase storage
+4 in the profile screen and at the navigation footer as a avatar when the user clicks it it goes to the profile screen
+5 users first letter
+6 no
+7 max file 3mb and allowed formats jpg png and add error messages if it is another format or more than 3mb,
+add complete tests for this feature.
+
+1 add a dedicated profile screen
+2 from the photo library
+3 supabase storage
+4 in the profile screen and at the navigation footer as a avatar when the user clicks it it goes to the profile screen
+5 users first letter
+6 no
+7 max file 3mb and allowed formats jpg png and add error messages if it is another format or more than 3mb,
+add complete tests for this feature.
+
+have you got other questions?
+
+1 yes
+2 only in the profilescreen and navigation footer
+3 add a new tab for the profile and instead of an icon it should be the profile picture/avatar
+
+have you got other questions?
+
+1 yes
+2 only in the profilescreen and navigation footer
+3 add a new tab for the profile and instead of an icon it should be the profile picture/avatar
+
+have you got other questions?
+
+implement it based on best practices
+
+give me a guide now what should i implement in supabase
+
+ive added the bucket where do i add the policies, i have two options either get them from a template or creating a policy from scratch
+
+ive added the four policies is it correct so
+
+@node (1007-1016)  fix these 
+
+@node (1013-1016) fix that
+
+fix this one @node (1012-1014) 
+
+edit now the readme.md in the pomodoro folder add a propper readme read the structure and add it 
+

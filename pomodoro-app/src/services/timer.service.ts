@@ -13,11 +13,13 @@ export const timerService = {
         .single();
 
       if (error) {
+        console.error("Error creating session:", error);
         return null;
       }
 
       return data;
     } catch (error) {
+      console.error("Error creating session:", error);
       return null;
     }
   },
@@ -36,11 +38,13 @@ export const timerService = {
         .single();
 
       if (error) {
+        console.error("Error creating session:", error);
         return null;
       }
 
       return data;
     } catch (error) {
+      console.error("Error creating session:", error);
       return null;
     }
   },
@@ -59,11 +63,13 @@ export const timerService = {
         .order("started_at", { ascending: false });
 
       if (error) {
+        console.error("Error fetching sessions:", error);
         return [];
       }
 
       return data || [];
     } catch (error) {
+      console.error("Error fetching sessions:", error);
       return [];
     }
   },
@@ -84,11 +90,13 @@ export const timerService = {
         .order("started_at", { ascending: false });
 
       if (error) {
+        console.error("Error fetching sessions:", error);
         return [];
       }
 
       return data || [];
     } catch (error) {
+      console.error("Error fetching sessions:", error);
       return [];
     }
   },
@@ -113,6 +121,7 @@ export const timerService = {
         .gt("duration", 0); // Only count sessions with actual focus time
 
       if (error) {
+        console.error("Error fetching focus time:", error);
         return 0;
       }
 
@@ -146,6 +155,7 @@ export const timerService = {
         .gt("duration", 0); // Only count sessions with actual focus time
 
       if (error) {
+        console.error("Error fetching focus time:", error);
         return 0;
       }
 
@@ -164,11 +174,13 @@ export const timerService = {
         .eq("id", sessionId);
 
       if (error) {
+        console.error("Error deleting session:", error);
         return false;
       }
 
       return true;
     } catch (error) {
+      console.error("Error deleting session:", error);
       return false;
     }
   },
@@ -206,7 +218,7 @@ export const timerService = {
         [key: string]: { totalTime: number; sessionCount: number };
       } = {};
 
-      data?.forEach((session: any) => {
+      data?.forEach((session) => {
         const date = new Date(session.started_at).toISOString().split("T")[0];
         if (!stats[date]) {
           stats[date] = { totalTime: 0, sessionCount: 0 };
