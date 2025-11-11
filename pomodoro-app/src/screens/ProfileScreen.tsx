@@ -44,12 +44,13 @@ export const ProfileScreen: React.FC = () => {
     if (!hasPermission) return;
 
     try {
-      // Omit mediaTypes to use default (images only) - avoids deprecation warning
-      // The default behavior is to show images only, which is what we want
+      // Only allow JPEG images
       const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
+        exif: false,
       });
 
       if (!result.canceled && result.assets[0]) {

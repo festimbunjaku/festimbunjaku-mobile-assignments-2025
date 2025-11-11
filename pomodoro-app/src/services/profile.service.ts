@@ -4,7 +4,7 @@ import * as FileSystem from "expo-file-system/legacy";
 
 const PROFILE_PICTURES_BUCKET = "profile-pictures";
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB in bytes
-const ALLOWED_FORMATS = ["image/jpeg", "image/jpg", "image/png"];
+const ALLOWED_FORMATS = ["image/jpeg", "image/jpg"];
 
 export const profileService = {
   /**
@@ -79,7 +79,7 @@ export const profileService = {
     if (file.type && !ALLOWED_FORMATS.includes(file.type.toLowerCase())) {
       return {
         valid: false,
-        error: "Only JPG and PNG images are allowed",
+        error: "Only JPEG images are allowed",
       };
     }
 
@@ -151,9 +151,8 @@ export const profileService = {
         normalizedMimeType = "image/jpeg"; // Use standard JPEG mime type
       }
 
-      // Generate unique filename
-      const fileExt = normalizedMimeType.split("/")[1] || "jpg";
-      const fileName = `${userId}/${Date.now()}.${fileExt}`;
+      // Generate unique filename (always use .jpg extension for JPEG)
+      const fileName = `${userId}/${Date.now()}.jpg`;
 
       // Upload to Supabase Storage (accepts Uint8Array)
       const { data, error } = await supabase.storage
@@ -175,7 +174,7 @@ export const profileService = {
             error.message.includes("mime type") &&
             error.message.includes("not supported")
           ) {
-            errorMessage = `Image format not supported. The mime type "${mimeType}" is not allowed. Please use JPG or PNG format.`;
+            errorMessage = `Image format not supported. The mime type "${mimeType}" is not allowed. Please use JPEG format.`;
           } else if (error.message.includes("not supported")) {
             errorMessage = `Image format not supported: ${error.message}`;
           } else if (

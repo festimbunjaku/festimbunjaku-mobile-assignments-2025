@@ -611,3 +611,17 @@ fix this one @node (1012-1014)
 
 edit now the readme.md in the pomodoro folder add a propper readme read the structure and add it 
 
+first analyze the entire project in derail and then Create me a md file with a complete detailed documentation of the project based on best practices which i can convert into a word file 
+
+now i need a md file to make a powerpoint presentation it should be 10 pages max that i can present infromnt of my teacher and student colleges the first page will be with my name teachers name etc/ the second page what a pomodoro is, then from the third page we can talk about the actual app the presantation should have not so much txt it should be direct and easy to undrstand, a page should be about authentication a page should be about crud a page should be about file upload there should be screenshot added from the app to to make it visual too, have you got questions on how to implement it?
+
+restructure the slides into title subtitle(it should be like a description) and bullet texts 4 bullet points
+
+tell me which images/pages as images should i add to each slide or images from the web but what kind of 
+
+allow only jpeg images for the avatar and i will change it to supabase
+
+ne vend te slidet te 10 shto te slide i 4 edhe per testim
+
+me shto nje slide per settings page
+

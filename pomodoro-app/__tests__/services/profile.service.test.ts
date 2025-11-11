@@ -73,7 +73,7 @@ describe("profileService", () => {
       const result = profileService.validateImage(invalidFormat);
 
       expect(result.valid).toBe(false);
-      expect(result.error).toBe("Only JPG and PNG images are allowed");
+      expect(result.error).toBe("Only JPEG images are allowed");
     });
 
     test("accepts valid JPG image", () => {
@@ -88,16 +88,17 @@ describe("profileService", () => {
       expect(result.valid).toBe(true);
     });
 
-    test("accepts valid PNG image", () => {
-      const validPng = {
+    test("rejects PNG image (only JPEG allowed)", () => {
+      const invalidPng = {
         uri: "file://test.png",
         type: "image/png",
         fileSize: 1024 * 1024, // 1MB
       };
 
-      const result = profileService.validateImage(validPng);
+      const result = profileService.validateImage(invalidPng);
 
-      expect(result.valid).toBe(true);
+      expect(result.valid).toBe(false);
+      expect(result.error).toBe("Only JPEG images are allowed");
     });
 
     test("accepts valid image at max size", () => {
@@ -205,7 +206,25 @@ describe("profileService", () => {
       );
 
       expect(result.url).toBeNull();
-      expect(result.error).toBe("Only JPG and PNG images are allowed");
+      expect(result.error).toBe("Only JPEG images are allowed");
+    });
+
+    test("rejects PNG image format", async () => {
+      const userId = "user-1";
+      const imageUri = "file://test.png";
+      const mimeType = "image/png";
+
+      // Mock getFileSize
+      jest.spyOn(profileService, "getFileSize").mockResolvedValue(1024);
+
+      const result = await profileService.uploadProfilePicture(
+        userId,
+        imageUri,
+        mimeType
+      );
+
+      expect(result.url).toBeNull();
+      expect(result.error).toBe("Only JPEG images are allowed");
     });
   });
 
