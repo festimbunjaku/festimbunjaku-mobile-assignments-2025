@@ -1,7 +1,7 @@
 {
-  "buildCommand": "cd pomodoro-app && npm run build:web",
-  "outputDirectory": "pomodoro-app/dist",
-  "installCommand": "cd pomodoro-app && npm install",
+  "buildCommand": "npm run build:web",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
   "framework": null,
   "rewrites": [
     {
