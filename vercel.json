@@ -3,13 +3,7 @@
   "outputDirectory": "pomodoro-app/dist",
   "installCommand": "cd pomodoro-app && npm install",
   "framework": null,
-  "cleanUrls": false,
-  "trailingSlash": false,
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/index.html"
-    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
