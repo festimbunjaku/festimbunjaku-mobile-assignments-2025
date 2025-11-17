@@ -100,7 +100,13 @@ export const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={dynamicStyles.container}>
+    <ScrollView 
+      style={dynamicStyles.container}
+      contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+      nestedScrollEnabled={true}
+      bounces={false}
+      scrollEnabled={true}
+    >
       {/* Timer Settings */}
       {settings ? (
         <>

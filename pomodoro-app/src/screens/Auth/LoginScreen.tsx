@@ -70,6 +70,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled={true}
+        bounces={false}
+        scrollEnabled={true}
       >
         <View style={styles.content}>
           <View style={styles.header}>

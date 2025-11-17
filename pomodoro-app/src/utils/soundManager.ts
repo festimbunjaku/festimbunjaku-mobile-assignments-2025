@@ -1,27 +1,20 @@
-import { Audio } from "expo-av";
+import { createAudioPlayer, AudioPlayer } from "expo-audio";
 
 class SoundManager {
-  private sound: Audio.Sound | null = null;
+  private player: AudioPlayer | null = null;
   private isLoaded = false;
   private hasWarned = false;
 
   async loadSound() {
-    if (this.isLoaded) return;
+    if (this.isLoaded && this.player) return;
 
     try {
-      // Configure audio mode
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
-      });
-
-      // Load the alarm sound
+      // Create audio player and load the alarm sound
       try {
-        const { sound } = await Audio.Sound.createAsync(
-          require("../assets/sounds/alarm.mp3")
-        );
-        this.sound = sound;
+        const source = require("../assets/sounds/alarm.mp3");
+        this.player = createAudioPlayer(source);
+        // Wait a bit for the player to load
+        await new Promise((resolve) => setTimeout(resolve, 100));
         this.isLoaded = true;
       } catch (soundError) {
         // Only warn once to avoid spam
@@ -40,12 +33,20 @@ class SoundManager {
 
   async playAlarm() {
     try {
-      if (!this.isLoaded) {
+      if (!this.isLoaded || !this.player) {
         await this.loadSound();
       }
 
-      if (this.sound) {
-        await this.sound.replayAsync();
+      if (this.player) {
+        // If already playing, seek to start and play again
+        if (this.player.playing) {
+          await this.player.seekTo(0);
+          this.player.play();
+        } else {
+          // Seek to start in case it was paused mid-playback
+          await this.player.seekTo(0);
+          this.player.play();
+        }
       }
     } catch (error) {
       console.error("Error playing alarm:", error);
@@ -55,8 +56,9 @@ class SoundManager {
 
   async stopAlarm() {
     try {
-      if (this.sound) {
-        await this.sound.stopAsync();
+      if (this.player) {
+        this.player.pause();
+        await this.player.seekTo(0);
       }
     } catch (error) {
       console.error("Error stopping alarm:", error);
@@ -66,9 +68,9 @@ class SoundManager {
 
   async unloadSound() {
     try {
-      if (this.sound) {
-        await this.sound.unloadAsync();
-        this.sound = null;
+      if (this.player) {
+        this.player.remove();
+        this.player = null;
         this.isLoaded = false;
       }
     } catch (error) {
@@ -79,7 +81,7 @@ class SoundManager {
 
   // Reset method for testing - allows tests to reset internal state
   reset() {
-    this.sound = null;
+    this.player = null;
     this.isLoaded = false;
     this.hasWarned = false;
   }

@@ -23,7 +23,13 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ error, onReset }) => {
   const { theme } = useTheme();
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+    <ScrollView 
+      style={[styles.container, { backgroundColor: theme.background }]}
+      contentContainerStyle={{ flexGrow: 1 }}
+      nestedScrollEnabled={true}
+      bounces={false}
+      scrollEnabled={true}
+    >
       <View style={styles.errorContainer}>
         <MaterialIcons name="error-outline" size={48} color={theme.accent.warning} />
         <Text style={[styles.title, { color: theme.text.primary }]}>Oops! Something went wrong</Text>

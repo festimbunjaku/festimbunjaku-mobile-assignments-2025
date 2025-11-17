@@ -1,22 +1,38 @@
 import { soundManager } from "../../src/utils/soundManager";
-import { Audio } from "expo-av";
+import { AudioPlayer } from "expo-audio";
 
-jest.mock("expo-av");
+jest.mock("expo-audio");
 
 describe("Sound Error Handling", () => {
+  let mockPlayer: any;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    
+    mockPlayer = {
+      loadAsync: jest.fn().mockResolvedValue(undefined),
+      playAsync: jest.fn().mockResolvedValue(undefined),
+      replayAsync: jest.fn().mockResolvedValue(undefined),
+      pauseAsync: jest.fn().mockResolvedValue(undefined),
+      setPositionAsync: jest.fn().mockResolvedValue(undefined),
+      getStatusAsync: jest.fn().mockResolvedValue({
+        isLoaded: true,
+        isPlaying: false,
+      }),
+      unloadAsync: jest.fn().mockResolvedValue(undefined),
+    };
+
+    (AudioPlayer as jest.Mock).mockImplementation(() => mockPlayer);
   });
 
   test("handles missing sound file", async () => {
-    (Audio.setAudioModeAsync as jest.Mock).mockResolvedValue(undefined);
-    (Audio.Sound.createAsync as jest.Mock).mockRejectedValue(
+    mockPlayer.loadAsync.mockRejectedValueOnce(
       new Error("File not found")
     );
 
     await soundManager.loadSound();
 
-    expect(Audio.Sound.createAsync).toHaveBeenCalled();
+    expect(AudioPlayer).toHaveBeenCalled();
     await expect(soundManager.playAlarm()).resolves.not.toThrow();
   });
 
@@ -24,36 +40,20 @@ describe("Sound Error Handling", () => {
     const permissionError = new Error("Permission denied");
     (permissionError as any).code = "PERMISSION_DENIED";
 
-    (Audio.setAudioModeAsync as jest.Mock).mockRejectedValue(permissionError);
+    mockPlayer.loadAsync.mockRejectedValueOnce(permissionError);
 
     await expect(soundManager.loadSound()).resolves.not.toThrow();
   });
 
   test("handles audio playback failures", async () => {
-    const mockSound = {
-      replayAsync: jest.fn().mockRejectedValue(new Error("Playback failed")),
-      stopAsync: jest.fn(),
-      unloadAsync: jest.fn(),
-    };
-
-    (Audio.Sound.createAsync as jest.Mock).mockResolvedValue({
-      sound: mockSound,
-    });
+    mockPlayer.playAsync.mockRejectedValueOnce(new Error("Playback failed"));
 
     await soundManager.loadSound();
     await expect(soundManager.playAlarm()).resolves.not.toThrow();
   });
 
   test("handles audio unload failures", async () => {
-    const mockSound = {
-      replayAsync: jest.fn(),
-      stopAsync: jest.fn(),
-      unloadAsync: jest.fn().mockRejectedValue(new Error("Unload failed")),
-    };
-
-    (Audio.Sound.createAsync as jest.Mock).mockResolvedValue({
-      sound: mockSound,
-    });
+    mockPlayer.unloadAsync.mockRejectedValueOnce(new Error("Unload failed"));
 
     await soundManager.loadSound();
     await expect(soundManager.unloadSound()).resolves.not.toThrow();

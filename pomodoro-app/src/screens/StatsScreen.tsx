@@ -117,9 +117,13 @@ export const StatsScreen: React.FC = () => {
   return (
     <ScrollView
       style={dynamicStyles.container}
+      contentContainerStyle={{ flexGrow: 1 }}
       refreshControl={
         <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
       }
+      nestedScrollEnabled={true}
+      bounces={false}
+      scrollEnabled={true}
     >
       {/* Today's Stats */}
       <View style={styles.section}>

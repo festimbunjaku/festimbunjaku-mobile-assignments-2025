@@ -91,6 +91,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       style={[styles.container, { backgroundColor: theme.background }]}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
+      nestedScrollEnabled={true}
+      bounces={false}
+      scrollEnabled={true}
     >
       {/* Header Navigation */}
       <View style={styles.header}>

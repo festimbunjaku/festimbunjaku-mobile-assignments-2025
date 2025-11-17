@@ -55,9 +55,13 @@ export const HistoryScreen: React.FC = () => {
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: theme.background }]}
+      contentContainerStyle={{ flexGrow: 1 }}
       refreshControl={
         <RefreshControl refreshing={loading} onRefresh={fetchHistory} />
       }
+      nestedScrollEnabled={true}
+      bounces={false}
+      scrollEnabled={true}
     >
       {sessions.length === 0 ? (
         <View style={styles.emptyState}>

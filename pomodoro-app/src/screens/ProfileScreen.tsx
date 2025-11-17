@@ -161,7 +161,13 @@ export const ProfileScreen: React.FC = () => {
   }
 
   return (
-    <ScrollView style={dynamicStyles.container}>
+    <ScrollView 
+      style={dynamicStyles.container}
+      contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+      nestedScrollEnabled={true}
+      bounces={false}
+      scrollEnabled={true}
+    >
       {/* Profile Picture Section */}
       <View style={styles.section}>
         <View style={styles.avatarSection}>

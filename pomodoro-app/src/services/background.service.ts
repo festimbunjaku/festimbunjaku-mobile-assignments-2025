@@ -1,4 +1,6 @@
 import * as TaskManager from "expo-task-manager";
+// TODO: Migrate from expo-background-fetch to expo-background-task when available
+// expo-background-fetch is deprecated but still functional
 import * as BackgroundFetch from "expo-background-fetch";
 import { storageService } from "./storage.service";
 import { timerService } from "./timer.service";

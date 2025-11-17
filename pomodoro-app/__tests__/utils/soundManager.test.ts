@@ -1,52 +1,54 @@
-import { Audio } from "expo-av";
+import { AudioPlayer } from "expo-audio";
 import { soundManager } from "../../src/utils/soundManager";
 
-jest.mock("expo-av");
+jest.mock("expo-audio");
 
-// Create a shared mock sound object that will be reused
-let mockSound: any;
+// Create a shared mock player object that will be reused
+let mockPlayer: any;
 
 describe("soundManager", () => {
   beforeEach(() => {
     // Reset the soundManager internal state using the reset method
     soundManager.reset();
     
-    // Create a fresh mock sound for each test
-    mockSound = {
+    // Create a fresh mock player for each test
+    mockPlayer = {
+      loadAsync: jest.fn().mockResolvedValue(undefined),
+      playAsync: jest.fn().mockResolvedValue(undefined),
       replayAsync: jest.fn().mockResolvedValue(undefined),
-      stopAsync: jest.fn().mockResolvedValue(undefined),
+      pauseAsync: jest.fn().mockResolvedValue(undefined),
+      setPositionAsync: jest.fn().mockResolvedValue(undefined),
+      getStatusAsync: jest.fn().mockResolvedValue({
+        isLoaded: true,
+        isPlaying: false,
+      }),
       unloadAsync: jest.fn().mockResolvedValue(undefined),
     };
     
     // Reset and set up mocks fresh for each test
-    (Audio.setAudioModeAsync as jest.Mock).mockReset();
-    (Audio.Sound.createAsync as jest.Mock).mockReset();
+    (AudioPlayer as jest.Mock).mockReset();
     
-    // Set up the mock to return our mock sound
-    (Audio.setAudioModeAsync as jest.Mock).mockResolvedValue(undefined);
-    (Audio.Sound.createAsync as jest.Mock).mockResolvedValue({
-      sound: mockSound,
-    });
+    // Set up the mock constructor to return our mock player
+    (AudioPlayer as jest.Mock).mockImplementation(() => mockPlayer);
   });
 
   describe("loadSound", () => {
     test("loads sound successfully", async () => {
       await soundManager.loadSound();
 
-      expect(Audio.setAudioModeAsync).toHaveBeenCalled();
-      expect(Audio.Sound.createAsync).toHaveBeenCalled();
+      expect(AudioPlayer).toHaveBeenCalled();
+      expect(mockPlayer.loadAsync).toHaveBeenCalled();
     });
 
     test("handles missing sound file gracefully", async () => {
-      (Audio.setAudioModeAsync as jest.Mock).mockResolvedValue(undefined);
-      (Audio.Sound.createAsync as jest.Mock).mockRejectedValue(
+      mockPlayer.loadAsync.mockRejectedValueOnce(
         new Error("File not found")
       );
 
       await soundManager.loadSound();
 
-      expect(Audio.setAudioModeAsync).toHaveBeenCalled();
-      expect(Audio.Sound.createAsync).toHaveBeenCalled();
+      expect(AudioPlayer).toHaveBeenCalled();
+      expect(mockPlayer.loadAsync).toHaveBeenCalled();
     });
 
     test("does not reload if already loaded", async () => {
@@ -54,7 +56,7 @@ describe("soundManager", () => {
       jest.clearAllMocks();
       await soundManager.loadSound();
 
-      expect(Audio.Sound.createAsync).toHaveBeenCalledTimes(0);
+      expect(AudioPlayer).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -62,22 +64,34 @@ describe("soundManager", () => {
     test("plays alarm sound", async () => {
       await soundManager.loadSound();
       // Verify the sound was loaded
-      expect(Audio.Sound.createAsync).toHaveBeenCalled();
+      expect(AudioPlayer).toHaveBeenCalled();
       
       await soundManager.playAlarm();
 
-      expect(mockSound.replayAsync).toHaveBeenCalled();
+      expect(mockPlayer.getStatusAsync).toHaveBeenCalled();
+      expect(mockPlayer.playAsync).toHaveBeenCalled();
     });
 
     test("loads sound if not loaded before playing", async () => {
       await soundManager.playAlarm();
 
-      expect(Audio.Sound.createAsync).toHaveBeenCalled();
-      expect(mockSound.replayAsync).toHaveBeenCalled();
+      expect(AudioPlayer).toHaveBeenCalled();
+      expect(mockPlayer.playAsync).toHaveBeenCalled();
+    });
+
+    test("replays if already playing", async () => {
+      mockPlayer.getStatusAsync.mockResolvedValueOnce({
+        isLoaded: true,
+        isPlaying: true,
+      });
+      await soundManager.loadSound();
+      await soundManager.playAlarm();
+
+      expect(mockPlayer.replayAsync).toHaveBeenCalled();
     });
 
     test("handles playback errors gracefully", async () => {
-      mockSound.replayAsync.mockRejectedValueOnce(new Error("Playback failed"));
+      mockPlayer.playAsync.mockRejectedValueOnce(new Error("Playback failed"));
       await soundManager.loadSound();
       await expect(soundManager.playAlarm()).resolves.not.toThrow();
     });
@@ -88,11 +102,12 @@ describe("soundManager", () => {
       await soundManager.loadSound();
       await soundManager.stopAlarm();
 
-      expect(mockSound.stopAsync).toHaveBeenCalled();
+      expect(mockPlayer.pauseAsync).toHaveBeenCalled();
+      expect(mockPlayer.setPositionAsync).toHaveBeenCalledWith(0);
     });
 
     test("handles stop errors gracefully", async () => {
-      mockSound.stopAsync.mockRejectedValueOnce(new Error("Stop failed"));
+      mockPlayer.pauseAsync.mockRejectedValueOnce(new Error("Stop failed"));
       await soundManager.loadSound();
       await expect(soundManager.stopAlarm()).resolves.not.toThrow();
     });
@@ -103,11 +118,11 @@ describe("soundManager", () => {
       await soundManager.loadSound();
       await soundManager.unloadSound();
 
-      expect(mockSound.unloadAsync).toHaveBeenCalled();
+      expect(mockPlayer.unloadAsync).toHaveBeenCalled();
     });
 
     test("handles unload errors gracefully", async () => {
-      mockSound.unloadAsync.mockRejectedValueOnce(new Error("Unload failed"));
+      mockPlayer.unloadAsync.mockRejectedValueOnce(new Error("Unload failed"));
       await soundManager.loadSound();
       await expect(soundManager.unloadSound()).resolves.not.toThrow();
     });
