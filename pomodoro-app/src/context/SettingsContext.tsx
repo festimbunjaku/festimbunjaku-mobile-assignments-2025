@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../services/supabase";
 import { useAuth } from "../hooks/useAuth";
 import { Settings, SettingsUpdate } from "../types";
+import { DEFAULT_SETTINGS } from "../constants/defaults";
 
 interface SettingsContextType {
   settings: Settings | null;
@@ -33,6 +34,37 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Helper function to create default settings
+  const createDefaultSettings = async (userId: string) => {
+    try {
+      const defaultSettings = {
+        user_id: userId,
+        work_duration: DEFAULT_SETTINGS.WORK_DURATION,
+        break_duration: DEFAULT_SETTINGS.BREAK_DURATION,
+        alarm_sound_enabled: DEFAULT_SETTINGS.ALARM_SOUND_ENABLED,
+        dark_mode_enabled: DEFAULT_SETTINGS.DARK_MODE_ENABLED,
+        meditation_enabled: false,
+        meditation_interval_minutes: 5,
+      };
+
+      const { data: newSettings, error: insertError } = await supabase
+        .from("settings")
+        .insert(defaultSettings)
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error("Error creating default settings:", insertError);
+        setSettings(null);
+      } else {
+        setSettings(newSettings);
+      }
+    } catch (createError) {
+      console.error("Error creating default settings:", createError);
+      setSettings(null);
+    }
+  };
+
   // Load settings on mount and when user changes
   useEffect(() => {
     const loadSettings = async () => {
@@ -45,17 +77,21 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setLoading(true);
       try {
+        // Use regular select instead of maybeSingle to avoid 406 errors
         const { data, error } = await supabase
           .from("settings")
           .select("*")
           .eq("user_id", user.id)
-          .single();
+          .limit(1);
 
         if (error) {
           console.error("Error loading settings:", error);
           setSettings(null);
+        } else if (!data || data.length === 0) {
+          // No settings exist, create default settings
+          await createDefaultSettings(user.id);
         } else {
-          setSettings(data);
+          setSettings(data[0]);
         }
       } catch (error) {
         console.error("Error loading settings:", error);
