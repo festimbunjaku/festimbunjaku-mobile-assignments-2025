@@ -45,8 +45,9 @@ export const ProfileScreen: React.FC = () => {
 
     try {
       // Only allow JPEG images
+      // Using string value as MediaType may not be available in this version
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: "images",
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
@@ -55,11 +56,16 @@ export const ProfileScreen: React.FC = () => {
 
       if (!result.canceled && result.assets[0]) {
         const asset = result.assets[0];
-        await uploadImage(asset.uri, asset.mimeType || "image/jpeg");
+        // Pass the actual mimeType - don't default to JPEG as validation needs to check it
+        await uploadImage(asset.uri, asset.mimeType || "");
       }
     } catch (error) {
       console.error("Error picking image:", error);
-      Alert.alert("Error", "Failed to pick image. Please try again.");
+      if (Platform.OS === "web") {
+        window.alert("Error\n\nFailed to pick image. Please try again.");
+      } else {
+        Alert.alert("Error", "Failed to pick image. Please try again.");
+      }
     }
   };
 
@@ -68,6 +74,9 @@ export const ProfileScreen: React.FC = () => {
 
     setUploading(true);
     try {
+      // Log for debugging
+      console.log("Uploading image:", { uri: uri.substring(0, 50), mimeType, user: user.id });
+      
       // Validate image before upload
       const fileSize = await profileService.getFileSize(uri);
       const validation = profileService.validateImage({
@@ -76,8 +85,17 @@ export const ProfileScreen: React.FC = () => {
         fileSize,
       });
 
+      console.log("Validation result:", validation);
+
       if (!validation.valid) {
-        Alert.alert("Invalid Image", validation.error || "Invalid image file");
+        const errorMessage = validation.error || "Invalid image file";
+        console.warn("Image validation failed:", errorMessage);
+        // Use web-compatible alert
+        if (Platform.OS === "web") {
+          window.alert(`Invalid Image\n\n${errorMessage}`);
+        } else {
+          Alert.alert("Invalid Image", errorMessage);
+        }
         setUploading(false);
         return;
       }
@@ -89,14 +107,26 @@ export const ProfileScreen: React.FC = () => {
       );
 
       if (error) {
-        Alert.alert("Upload Failed", error);
+        if (Platform.OS === "web") {
+          window.alert(`Upload Failed\n\n${error}`);
+        } else {
+          Alert.alert("Upload Failed", error);
+        }
       } else {
         await refreshProfile();
-        Alert.alert("Success", "Profile picture updated successfully!");
+        if (Platform.OS === "web") {
+          window.alert("Success\n\nProfile picture updated successfully!");
+        } else {
+          Alert.alert("Success", "Profile picture updated successfully!");
+        }
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      Alert.alert("Error", "Failed to upload image. Please try again.");
+      if (Platform.OS === "web") {
+        window.alert("Error\n\nFailed to upload image. Please try again.");
+      } else {
+        Alert.alert("Error", "Failed to upload image. Please try again.");
+      }
     } finally {
       setUploading(false);
     }
@@ -105,37 +135,63 @@ export const ProfileScreen: React.FC = () => {
   const removeProfilePicture = async () => {
     if (!user) return;
 
-    Alert.alert(
-      "Remove Profile Picture",
-      "Are you sure you want to remove your profile picture?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: async () => {
-            setUploading(true);
-            try {
-              const success = await profileService.removeProfilePicture(user.id);
-              if (success) {
-                await refreshProfile();
-                Alert.alert("Success", "Profile picture removed successfully!");
-              } else {
-                Alert.alert("Error", "Failed to remove profile picture.");
-              }
-            } catch (error) {
-              console.error("Error removing profile picture:", error);
-              Alert.alert("Error", "Failed to remove profile picture.");
-            } finally {
-              setUploading(false);
-            }
+    const handleRemove = async () => {
+      setUploading(true);
+      try {
+        console.log("Removing profile picture for user:", user.id);
+        const success = await profileService.removeProfilePicture(user.id);
+        console.log("Remove result:", success);
+        if (success) {
+          await refreshProfile();
+          if (Platform.OS === "web") {
+            window.alert("Profile picture removed successfully!");
+          } else {
+            Alert.alert("Success", "Profile picture removed successfully!");
+          }
+        } else {
+          if (Platform.OS === "web") {
+            window.alert("Failed to remove profile picture.");
+          } else {
+            Alert.alert("Error", "Failed to remove profile picture.");
+          }
+        }
+      } catch (error) {
+        console.error("Error removing profile picture:", error);
+        if (Platform.OS === "web") {
+          window.alert("Failed to remove profile picture.");
+        } else {
+          Alert.alert("Error", "Failed to remove profile picture.");
+        }
+      } finally {
+        setUploading(false);
+      }
+    };
+
+    // Use window.confirm on web, Alert.alert on native platforms
+    if (Platform.OS === "web") {
+      const confirmed = window.confirm(
+        "Are you sure you want to remove your profile picture?"
+      );
+      if (confirmed) {
+        handleRemove();
+      }
+    } else {
+      Alert.alert(
+        "Remove Profile Picture",
+        "Are you sure you want to remove your profile picture?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
           },
-        },
-      ]
-    );
+          {
+            text: "Remove",
+            style: "destructive",
+            onPress: handleRemove,
+          },
+        ]
+      );
+    }
   };
 
   const dynamicStyles = {

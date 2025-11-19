@@ -1,6 +1,7 @@
 import { supabase } from "./supabase";
 import { Profile, ProfileUpdate } from "../types";
 import * as FileSystem from "expo-file-system/legacy";
+import { Platform } from "react-native";
 
 const PROFILE_PICTURES_BUCKET = "profile-pictures";
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB in bytes
@@ -75,11 +76,42 @@ export const profileService = {
       };
     }
 
-    // Check file format
-    if (file.type && !ALLOWED_FORMATS.includes(file.type.toLowerCase())) {
+    // Check file format - require type to be present and valid
+    if (!file.type || file.type.trim() === "") {
+      // Try to infer from URI if type is not provided
+      const uriLower = file.uri.toLowerCase();
+      if (uriLower.includes('.png')) {
+        return {
+          valid: false,
+          error: "Only JPEG images are allowed. PNG format is not supported.",
+        };
+      }
+      if (uriLower.includes('.gif')) {
+        return {
+          valid: false,
+          error: "Only JPEG images are allowed. GIF format is not supported.",
+        };
+      }
+      if (uriLower.includes('.webp')) {
+        return {
+          valid: false,
+          error: "Only JPEG images are allowed. WebP format is not supported.",
+        };
+      }
+      // If we can't determine the type, require it to be provided
       return {
         valid: false,
-        error: "Only JPEG images are allowed",
+        error: "Image type could not be determined. Please select a JPEG image.",
+      };
+    }
+
+    const normalizedType = file.type.toLowerCase();
+    if (!ALLOWED_FORMATS.includes(normalizedType)) {
+      // Provide more specific error message
+      const formatName = normalizedType.split('/')[1]?.toUpperCase() || 'this format';
+      return {
+        valid: false,
+        error: `Only JPEG images are allowed. ${formatName} format is not supported.`,
       };
     }
 
@@ -107,42 +139,58 @@ export const profileService = {
         return { url: null, error: validation.error || "Invalid image" };
       }
 
-      // Read file as base64 (React Native compatible)
-      let base64 = await FileSystem.readAsStringAsync(imageUri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
+      // Handle file reading differently for web vs native
+      let uint8Array: Uint8Array;
 
-      // Convert base64 to Uint8Array for Supabase Storage (React Native compatible)
-      // Use a simple base64 decoder that works in all React Native environments
-      const base64Chars =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-      const bytes: number[] = [];
-      let i = 0;
+      if (Platform.OS === "web") {
+        // On web, fetch the blob URL and convert to Uint8Array
+        try {
+          const response = await fetch(imageUri);
+          const blob = await response.blob();
+          const arrayBuffer = await blob.arrayBuffer();
+          uint8Array = new Uint8Array(arrayBuffer);
+        } catch (error) {
+          console.error("Error reading file on web:", error);
+          return { url: null, error: "Failed to read image file" };
+        }
+      } else {
+        // On native, use FileSystem to read as base64
+        let base64 = await FileSystem.readAsStringAsync(imageUri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
 
-      // Remove whitespace but keep padding
-      base64 = base64.replace(/\s/g, "");
+        // Convert base64 to Uint8Array for Supabase Storage (React Native compatible)
+        // Use a simple base64 decoder that works in all React Native environments
+        const base64Chars =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        const bytes: number[] = [];
+        let i = 0;
 
-      while (i < base64.length) {
-        const encoded1 = base64Chars.indexOf(base64.charAt(i++));
-        const encoded2 = base64Chars.indexOf(base64.charAt(i++));
-        const encoded3 = base64Chars.indexOf(base64.charAt(i++));
-        const encoded4 = base64Chars.indexOf(base64.charAt(i++));
+        // Remove whitespace but keep padding
+        base64 = base64.replace(/\s/g, "");
 
-        // Handle padding (= is index 64)
-        if (encoded1 === -1 || encoded2 === -1) break;
+        while (i < base64.length) {
+          const encoded1 = base64Chars.indexOf(base64.charAt(i++));
+          const encoded2 = base64Chars.indexOf(base64.charAt(i++));
+          const encoded3 = base64Chars.indexOf(base64.charAt(i++));
+          const encoded4 = base64Chars.indexOf(base64.charAt(i++));
 
-        const bitmap =
-          (encoded1 << 18) |
-          (encoded2 << 12) |
-          ((encoded3 === 64 ? 0 : encoded3) << 6) |
-          (encoded4 === 64 ? 0 : encoded4);
+          // Handle padding (= is index 64)
+          if (encoded1 === -1 || encoded2 === -1) break;
 
-        bytes.push((bitmap >> 16) & 255);
-        if (encoded3 !== 64 && encoded3 !== -1) bytes.push((bitmap >> 8) & 255);
-        if (encoded4 !== 64 && encoded4 !== -1) bytes.push(bitmap & 255);
+          const bitmap =
+            (encoded1 << 18) |
+            (encoded2 << 12) |
+            ((encoded3 === 64 ? 0 : encoded3) << 6) |
+            (encoded4 === 64 ? 0 : encoded4);
+
+          bytes.push((bitmap >> 16) & 255);
+          if (encoded3 !== 64 && encoded3 !== -1) bytes.push((bitmap >> 8) & 255);
+          if (encoded4 !== 64 && encoded4 !== -1) bytes.push(bitmap & 255);
+        }
+
+        uint8Array = new Uint8Array(bytes);
       }
-
-      const uint8Array = new Uint8Array(bytes);
 
       // Normalize mime type (some systems use image/jpeg, others use image/jpg)
       // Supabase Storage typically accepts image/jpeg, but normalize to be safe
@@ -272,10 +320,18 @@ export const profileService = {
   },
 
   /**
-   * Get file size from URI (React Native compatible)
+   * Get file size from URI (React Native and Web compatible)
    */
   async getFileSize(uri: string): Promise<number> {
     try {
+      // On web, blob URLs need to be fetched
+      if (Platform.OS === "web") {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        return blob.size;
+      }
+      
+      // On native, use FileSystem
       const fileInfo = await FileSystem.getInfoAsync(uri);
       if (fileInfo.exists && "size" in fileInfo) {
         return fileInfo.size;

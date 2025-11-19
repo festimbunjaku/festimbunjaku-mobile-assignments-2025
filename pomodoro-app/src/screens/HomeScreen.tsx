@@ -88,8 +88,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: theme.background }]}
-      contentContainerStyle={styles.content}
+      style={[
+        styles.container,
+        { backgroundColor: theme.background },
+        Platform.OS === "web" && styles.containerWeb,
+      ]}
+      contentContainerStyle={[
+        styles.content,
+        Platform.OS === "web" && styles.contentWeb,
+      ]}
       showsVerticalScrollIndicator={false}
       nestedScrollEnabled={true}
       bounces={false}
@@ -351,9 +358,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  containerWeb: {
+    height: "100vh",
+    maxHeight: "100vh",
+    overflowY: "auto",
+    WebkitOverflowScrolling: "touch",
+  },
   content: {
     flexGrow: 1,
     paddingBottom: 40,
+  },
+  contentWeb: {
+    flexGrow: 0,
   },
   header: {
     flexDirection: "row",
